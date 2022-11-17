@@ -11,23 +11,25 @@ class Movies(models.Model):
     overview = models.TextField()
     release_date = models.DateField()
     genre_ids = models.IntegerField()
+    genre = models.TextField()
     popularity = models.IntegerField()
     vote_average = models.IntegerField()
     
 class Reviews(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movies, on_delete=models.CASCADE)
-    title = models.TextField()
-    sentense = models.TextField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'user_reviews')
+    movie = models.ForeignKey(Movies, on_delete=models.CASCADE, related_name = 'movie_reviews')
+    sentence = models.TextField()
     score = models.FloatField()
 
 class WishList(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movies, on_delete=models.CASCADE)
-    title = models.TextField()
-    poster_path = models.TextField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'user_wishlist')
+    movie = models.ForeignKey(Movies, on_delete=models.CASCADE, related_name = 'movie_wishlist')
 
 class Keyword(models.Model):
-    movie = models.ForeignKey(Movies, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movies, on_delete=models.CASCADE, related_name = 'movie_keyword')
     keyword = models.TextField()
     keyword_score = models.FloatField()
+
+class WatchedMovie(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'user_watchedmovie')
+    movie = models.ForeignKey(Movies, on_delete=models.CASCADE, related_name = 'movie_watchedmovie')
