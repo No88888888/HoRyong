@@ -12,19 +12,21 @@ def get_texts_scores(fname):
         docs = [doc.lower().replace('\n','').split('\t') for doc in f]
         docs = [doc for doc in docs if len(doc) == 2]
 
-        if not docs:
-            return [], []
+        # if not docs:
+        #     return [], []
 
         texts, scores = zip(*docs)
-        return list(texts), list(scores)
-
+        return list(texts)
+        # , list(scores)
+        
 # La La Land
 fname = './data/134963.txt'
-texts, scores = get_texts_scores(fname)
+texts = get_texts_scores(fname)
+# , scores
 
-with open(fname, encoding="utf-8") as f:
-    for _ in range(5):
-        print(next(f).strip())
+# with open(fname, encoding="utf-8") as f:
+#     for _ in range(5):
+#         print(next(f).strip())
 
 import sys
 sys.path.append('../')
@@ -33,28 +35,30 @@ from krwordrank.hangle import normalize
 import krwordrank
 # print(krwordrank.__version__)
 
-with open('./data/134963_norm.txt', 'w', encoding='utf-8') as f:
-    for text, score in zip(texts, scores):
-        text = normalize(text, english=True, number=True)
-        f.write('%s\t%s\n' % (text, str(score)))
+# with open('./data/134963_norm.txt', 'w', encoding='utf-8') as f:
+#     for text, score in zip(texts, scores):
+#         text = normalize(text, english=True, number=True)
+#         f.write('%s\t%s\n' % (text, str(score)))
 
 # La La Land
 fname = './data/134963_norm.txt'
-texts, scores = get_texts_scores(fname)
+texts = get_texts_scores(fname)
+# , scores
 
 wordrank_extractor = KRWordRank(
     min_count = 5, # 단어의 최소 출현 빈도수 (그래프 생성 시)
     max_length = 10, # 단어의 최대 길이
     verbose = True
     )
-
+# print(wordrank_extractor, '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 beta = 0.85    # PageRank의 decaying factor beta
 max_iter = 10
 
 keywords, rank, graph = wordrank_extractor.extract(texts, beta, max_iter)
 
 for word, r in sorted(keywords.items(), key=lambda x:x[1], reverse=True)[:30]:
-    print('%8s:\t%.4f' % (word, r))
+    # print('%8s:\t%.4f' % (word, r))
+    pass
 
 top_keywords = []
 fnames = ['./data/134963_norm.txt',
@@ -63,7 +67,8 @@ fnames = ['./data/134963_norm.txt',
 
 for fname in fnames:
     
-    texts, scores = get_texts_scores(fname)
+    texts = get_texts_scores(fname)
+    # , scores
     
     wordrank_extractor = KRWordRank(
         min_count=5, max_length=10, verbose=False)
@@ -84,8 +89,8 @@ for k in range(100):
         ['%8s (%.3f)' % (top_keywords[i][k][0],top_keywords[i][k][1])
          for i in range(3)])
     
-    print(message)
-    
+    # print(message)
+print(message)
 keyword_counter = {}
 for keywords in top_keywords:
     words, ranks = zip(*keywords)
@@ -112,12 +117,10 @@ def get_from_list(l, i, default=('', 0)):
     else:
         return l[i]
 
-######
-print('##################')
 for k in range(100 - len(common_keywords) ):
     
     message = '  --  '.join(
         ['%8s (%.3f)' % get_from_list(selected_top_keywords[i], k) for i in range(3)])
     
-    print(message)
+    # print(message)
     
