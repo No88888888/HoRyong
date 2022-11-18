@@ -29,6 +29,9 @@ class Keyword(models.Model):
     keyword = models.TextField()
     keyword_score = models.FloatField()
 
+class CommonKeyword(models.Model):
+    common_keyword = models.TextField()
+    
 class WatchedMovie(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'user_watchedmovie')
     movie = models.ForeignKey(Movies, on_delete=models.CASCADE, related_name = 'movie_watchedmovie')
