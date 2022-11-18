@@ -3,5 +3,5 @@ from . import views
 
 app_name = 'extractor'
 urlpatterns = [
-    path('', views.get_texts_scores),
+    # path('', views.keyword_extractor, name='keyword_extractor'),
 ]

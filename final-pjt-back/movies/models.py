@@ -10,8 +10,7 @@ class Movies(models.Model):
     backdrop_path = models.TextField()
     overview = models.TextField()
     release_date = models.DateField()
-    genre_ids = models.IntegerField()
-    genre = models.TextField()
+    genres = models.TextField()
     popularity = models.IntegerField()
     vote_average = models.IntegerField()
     
