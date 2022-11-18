@@ -1,3 +1,4 @@
+# from . import get_movie
 from django.urls import path
 from . import views
 
@@ -9,6 +10,7 @@ urlpatterns = [
     path('movies/<int:movie_pk>/', views.movie_detail, name='movie_detail'),
     path('movies/<int:movie_pk>/reviews/', views.review_create, name='review_create'),
     path('reviews/<int:movie_pk>/', views.review_detail, name='review_detail'),
+    # path('test/', get_movie.get_movie)
 ]
     
     

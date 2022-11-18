@@ -1,4 +1,8 @@
 from django.shortcuts import render
+import requests
+import json
+from .models import Movies
+
 
 def movie_list(request):
     pass
