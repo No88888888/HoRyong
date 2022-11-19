@@ -1,16 +1,17 @@
 # from . import get_movie
+# from . import views_2
 from django.urls import path
 from . import views
-from . import views_2
 
 
 app_name = 'movies'
 urlpatterns = [
     # path("", views.index, name="index"),
-    path('movies/', views.movie_list, name='movie_list'),
-    path('movies/<int:movie_pk>/', views.movie_detail, name='movie_detail'),
-    path('movies/<int:movie_pk>/reviews/', views.review_create, name='review_create'),
-    path('reviews/<int:movie_pk>/', views.review_detail, name='review_detail'),
+    path('', views.movie_list, name='movie_list'),
+    path('<int:movie_pk>/detail/', views.movie_detail, name='movie_detail'),
+    path('<int:movie_pk>/detail_review/', views.detail_review, name='detail_review'),
+    path('<int:user_pk>/my_review/', views.my_review, name='my_review'),
+    # path('<int:movie_pk>/review_create/', views.review_create, name='review_create'),
     # path('test/', get_movie.get_movie)
     # path('test2/', views_2.keyword_extractor_many,),
 ]
