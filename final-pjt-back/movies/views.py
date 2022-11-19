@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import requests
 import json
-from .models import Movies
+from .models import Movies, WishList
 from rest_framework import status
 from django.shortcuts import get_object_or_404, get_list_or_404
 
@@ -10,9 +10,10 @@ from rest_framework.decorators import api_view
 from django.http.response import JsonResponse
 # permission Decorators
 from rest_framework.decorators import permission_classes
+from django.views.decorators.http import require_http_methods, require_POST, require_safe
 from rest_framework.permissions import IsAuthenticated
-from .models import Movies, Reviews
-from .serializer import ReviewsSerializer
+from .models import Movies, Reviews, WatchedMovie, WishList
+from .serializer import ReviewsSerializer, WishListSerializer
 
 
 def movie_list(request):
@@ -46,6 +47,7 @@ def review_create(request):
 def detail_review(request):
     pass
 
+@api_view(['GET', 'PUT', 'DELETE'])
 def my_review(request, user_pk):
     review_data = get_list_or_404(Reviews)
     serializers = []
@@ -57,7 +59,61 @@ def my_review(request, user_pk):
                 # print(serializer.data)
                 serializers.append(serializer.data)
                 
+            if request.method == 'PUT':
+                pass
     return JsonResponse(serializers, safe=False)
+
+@api_view(['GET', 'POST'])
+def wish_list(request, user_pk):
+    wishlist_data = get_list_or_404(WishList)
+    serializers = []
+    for i in wishlist_data:
+        if i.user_id == user_pk:
+            wishlist = i
+            if request.method == 'GET':
+                serializer = WishListSerializer(wishlist)
+                # print(serializer.data)
+                serializers.append(serializer.data)
+            # if request.method == 'DELETE':
+            #     # .remove('해당무비')
+            #     pass
+    return JsonResponse(serializers, safe=False)
+
+# TODO: 위시리스트 어덯게 해야하지
+@require_POST
+def follow(request, user_pk):
+    if request.user.is_authenticated:
+        User = get_user_model()
+        me = request.user
+        you = User.objects.get(pk=user_pk)
+        if me != you:
+            # 내가 (request.user) 그 사람의 팔로워 목록에 있다면
+            # if me in you.followers.all():
+            if you.followers.filter(pk=me.pk).exists():
+                #언팔로우
+                you.followers.remove(me)
+            else:
+                # 팔로우
+                you.followers.add(me)
+        return redirect('accounts:profile', you.username)
+    return redirect('accounts:login')
+
+# TODO: 워치드무비 넣다뻈다 구현
+@require_POST
+def watched_movie(request, movie_pk):
+    watchedmovie = get_object_or_404(WatchedMovie, pk=movie_pk)
+    if watchedmovie.movie_id.filter(pk=request.user.pk).exists():
+        watchedmovie.movie_id.remove(request.user)        
+        
+    pass
+
+
+
+
+
+
+
+
 # @api_view(['GET', 'DELETE', 'PUT'])
 # def article_detail(request, article_pk):
 #     # article = Article.objects.get(pk=article_pk)

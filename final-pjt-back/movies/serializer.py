@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Movies, Reviews
+from .models import Movies, Reviews, WishList, WatchedMovie
 
 
 # class MoviesListSerializer(serializers.ModelSerializer):
@@ -28,7 +28,7 @@ class ReviewsSerializer(serializers.ModelSerializer):
 
         class Meta:
             model = Movies
-            fields = ('movie_id', 'poster_path', 'title','overview',)
+            fields = ('movie_id', 'poster_path', 'title', 'overview', 'vote_average',)
         
     class Meta:
         model = Reviews
@@ -38,4 +38,21 @@ class ReviewsSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         response = super().to_representation(instance)
         response['movie'] = self.MyReviewSerializer(instance.movie).data
+        return response
+    
+class WishListSerializer(serializers.ModelSerializer):
+    
+    class MyWishListSerializer(serializers.ModelSerializer):
+
+        class Meta:
+            model = Movies
+            fields = ('movie_id', 'poster_path', 'title','overview', 'vote_average',)
+    class Meta:
+        model = WishList
+        fields = '__all__'
+        read_only_fields = ('movie', 'user')
+    
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['movie'] = self.MyWishListSerializer(instance.movie).data
         return response
