@@ -40,46 +40,100 @@ def movie_list(request):
 
 
 def movie_detail(request):
+    
     pass
     
 def create_review(request):
+    
     pass
     
 # def detail_review(request):
 #     pass
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET'])
 def my_review(request, user_pk):
     review_data = get_list_or_404(Reviews)
     serializers = []
-    for i in review_data:
-        if i.user_id == user_pk:
-            review = i
-            if request.method == 'GET':
+    if request.method == 'GET':
+        for review in review_data:
+            if review.user_id == user_pk:
                 serializer = ReviewsSerializer(review)
                 # print(serializer.data)
                 serializers.append(serializer.data)
-                
-            if request.method == 'PUT':
-                pass
     return JsonResponse(serializers, safe=False)
+        
 
 
-@api_view(['GET', 'POST'])
-def wish_list(request, user_pk):
-    wishlist_data = get_list_or_404(WishList)
+@api_view(['PUT', 'DELETE'])
+def modify_myreview(request, user_pk, movie_pk):
+    review_data = get_list_or_404(Reviews)
+    my_review = []
+    for review in review_data:
+        if review.user_id == user_pk:
+            my_review.append(review)
+            
+    if request.method == 'PUT':
+        review = Reviews.objects.get(user_id=user_pk, movie_id=movie_pk)
+        serializer = ReviewsSerializer(review, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
+    elif request.method == 'DELETE':
+        review = Reviews.objects.get(user_id=user_pk, movie_id=movie_pk)
+        my_review.pop(my_review.index(review))
+        review.delete()
+        serializer = ReviewsSerializer(my_review, many=True)
+        return Response(serializer.data)
+
+
+
+@api_view(['GET'])
+def wish_list(request):
+    wishlist_data = WishList.objects.all()
     serializers = []
-    for i in wishlist_data:
-        if i.user_id == user_pk:
-            wishlist = i
-            if request.method == 'GET':
+    if request.method == 'GET':
+        for wishlist in wishlist_data:
+            if wishlist.user_id == request.user.pk:
                 serializer = WishListSerializer(wishlist)
                 # print(serializer.data)
                 serializers.append(serializer.data)
-            # if request.method == 'DELETE':
-            #     # .remove('해당무비')
-            #     pass
+        else:        
+            return JsonResponse(wishlist_data, safe=False)
     return JsonResponse(serializers, safe=False)
+
+@csrf_exempt
+@api_view(['POST', 'DELETE'])
+def modify_wishlist(request, movie_pk):
+    request.user.pk = 1
+    wishlist = WishList.objects.all()
+    my_wish_movie = []
+    for i in wishlist:
+        if i.user_id == request.user.pk:
+            my_wish_movie.append(i)
+    # print(my_wish_movie)
+    if request.method == 'POST':
+        for i in wishlist:
+            if i.movie_id == movie_pk and i.user_id == request.user.pk:
+                delete_id= i.id
+                wishmovie = get_object_or_404(WishList, pk=delete_id)
+                my_wish_movie.pop(my_wish_movie.index(wishmovie))
+                wishmovie.delete()
+                break
+        else:
+            added_wish_movie = WishList(
+                user_id = request.user.pk,
+                movie_id = movie_pk
+            )
+            added_wish_movie.save()
+            my_wish_movie.append(added_wish_movie)
+            print('1',my_wish_movie)
+    elif request.method == 'DELETE':
+        wishmovie = WishList.objects.get(movie_id=movie_pk, user_id=request.user.pk)
+        my_wish_movie.pop(my_wish_movie.index(wishmovie))
+        # print('2', my_wish_movie)
+        wishmovie.delete()
+    serializer = WishListSerializer(my_wish_movie, many=True)
+    return Response(serializer.data)
 
 
 # 내가 본영화 넣고 빼고 함수
@@ -87,27 +141,28 @@ def wish_list(request, user_pk):
 @csrf_exempt
 @require_POST
 def watched_movie(request, movie_pk):
-    request.user.pk = 1
-    watchedmovie = WatchedMovie.objects.all()
-    my_watch_movie = []
-    for i in watchedmovie:
-        if i.user_id == request.user.pk:
-            my_watch_movie.append(i.movie_id)
-    for i in watchedmovie:
-        if i.movie_id == movie_pk and i.user_id == request.user.pk:
-            delete_id= i.id
-            watchmovie = get_object_or_404(WatchedMovie, pk=delete_id)
-            watchmovie.delete()
-            my_watch_movie.remove(movie_pk)
-            break
-    else:
-        added_watched_movie = WatchedMovie(
-            user_id = request.user.pk,
-            movie_id = movie_pk
-        )
-        added_watched_movie.save()
-        my_watch_movie.append(added_watched_movie.movie_id)
-    return JsonResponse(my_watch_movie, safe=False)
+    if request.user.is_authenticated:
+        request.user.pk = 1
+        watchedmovie = WatchedMovie.objects.all()
+        my_watch_movie = []
+        for i in watchedmovie:
+            if i.user_id == request.user.pk:
+                my_watch_movie.append(i.movie_id)
+        for i in watchedmovie:
+            if i.movie_id == movie_pk and i.user_id == request.user.pk:
+                delete_id= i.id
+                watchmovie = get_object_or_404(WatchedMovie, pk=delete_id)
+                watchmovie.delete()
+                my_watch_movie.remove(movie_pk)
+                break
+        else:
+            added_watched_movie = WatchedMovie(
+                user_id = request.user.pk,
+                movie_id = movie_pk
+            )
+            added_watched_movie.save()
+            my_watch_movie.append(added_watched_movie.movie_id)
+        return JsonResponse(my_watch_movie, safe=False)
 
 
 # TODO: 위시리스트 어덯게 해야하지
@@ -142,3 +197,19 @@ def watched_movie(request, movie_pk):
 #         serializer = ArticleSerializer(article)
 #         print(serializer.data)
 #         return Response(serializer.data)
+
+# @api_view(['GET'])
+# def wish_list(request, user_pk):
+#     wishlist_data = get_list_or_404(WishList)
+#     serializers = []
+#     for i in wishlist_data:
+#         if i.user_id == user_pk:
+#             wishlist = i
+#             if request.method == 'GET':
+#                 serializer = WishListSerializer(wishlist)
+#                 # print(serializer.data)
+#                 serializers.append(serializer.data)
+#             # if request.method == 'DELETE':
+#             #     # .remove('해당무비')
+#             #     pass
+#     return JsonResponse(serializers, safe=False)

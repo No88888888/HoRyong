@@ -10,8 +10,9 @@ urlpatterns = [
     path('', views.movie_list, name='movie_list'), # 영화 전체 리스트
     path('<int:movie_pk>/', views.movie_detail, name='movie_detail'),
     path('<int:movie_pk>/create_review/', views.create_review, name='create_review'), # 영화 하나에 슬 리뷰
-    path('<int:user_pk>/my_review/', views.my_review, name='my_review'),
-    path('<int:movie_pk>/wish_list/', views.wish_list, name='wish_list'),
+    path('<int:movie_pk>/my_review/<int:user_pk>/', views.my_review, name='my_review'),
+    path('wish_list/', views.wish_list, name='wish_list'),
+    path('<int:movie_pk>/modify_wishlist/', views.modify_wishlist, name='modify_wishlist'),
     path('<int:movie_pk>/watched_movie/', views.watched_movie, name='watched_movie'),
     # path('<int:movie_pk>/review_create/', views.review_create, name='review_create'),
     # path('test/', get_movie.get_movie),
