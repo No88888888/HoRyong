@@ -42,11 +42,11 @@ def movie_list(request):
 def movie_detail(request):
     pass
     
-def review_create(request):
+def create_review(request):
     pass
     
-def detail_review(request):
-    pass
+# def detail_review(request):
+#     pass
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def my_review(request, user_pk):
@@ -115,7 +115,10 @@ def watched_movie(request, movie_pk):
                     # watchedmovie_list.append(i.movie_id.filter(pk=movie_pk).exists())
             for j in watchedmovie_list:
                 if j.user_id == request.user.pk:
-                    watchedmovie.user_id.remove(request.user.pk)
+                    print(watchedmovie)
+                    # watchedmovie.user_id.remove(request.user.pk)
+                    watchedmovie.remove(j)
+                    print(watchedmovie)
             else:
                 added_watched_movie = WatchedMovie(
                     user_id = request.user.pk,
