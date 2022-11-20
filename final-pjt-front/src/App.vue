@@ -1,13 +1,15 @@
 <template>
-  <div id="app">
-    <nav>
-      <router-link :to="{ name: 'MovieView' }">Movies</router-link> | 
-      <router-link :to="{ name: 'ProfileView' }">Profiles</router-link> | 
-      <router-link :to="{ name: 'SignUpView' }">Sign Up Page</router-link> | 
-      <router-link :to="{ name: 'LoginView' }">Login Page</router-link>
-    </nav>
-    <router-view/>
-  </div>
+  <body>
+    <div id="app">
+      <nav>
+        <router-link :to="{ name: 'MovieView' }">Movies</router-link> | 
+        <router-link :to="{ name: 'ProfileView' }">Profiles</router-link> | 
+        <router-link :to="{ name: 'SignUpView' }">Sign Up Page</router-link> | 
+        <router-link :to="{ name: 'LoginView' }">Login Page</router-link>
+      </nav>
+      <router-view/>
+    </div>
+  </body>
 </template>
 
 <style>
@@ -30,5 +32,24 @@ nav a {
 
 nav a.router-link-exact-active {
   color: #42b983;
+}
+
+body {
+	background: linear-gradient(-45deg, #ffffff, #3ac047, #1f16c6, #bd2323);
+	background-size: 400% 400%;
+	animation: gradient 5s ease infinite;
+	height: 100vh;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 </style>

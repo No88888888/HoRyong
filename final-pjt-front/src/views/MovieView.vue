@@ -2,15 +2,15 @@
   <div>
     <h1>Movie Page</h1>
     <hr>
-    <MovieLists/>
-    <div class="example-modal-window">
-    <p>버튼을 누르면 모달 대화 상자가 열립니다.</p>
-    <button @click="openModal">열기</button>
+    <MovieLists @to-movie-view="openModal"/>
 
     <!-- 컴포넌트 MyModal -->
     <ReviewModal @close="closeModal" v-if="modal">
       <!-- default 슬롯 콘텐츠 -->
       <p>영화의 리뷰를 입력해서 다른 영화를 추천 받아 보세요!</p>
+      <div>
+        <img :src="imgUrl" alt="">
+      </div>
       <div><input v-model="message"></div>
       <!-- /default -->
       <!-- footer 슬롯 콘텐츠 -->
@@ -19,7 +19,6 @@
       </template>
       <!-- /footer -->
     </ReviewModal>
-  </div>
   </div>
 </template>
 
@@ -35,12 +34,19 @@ export default {
     data() {
       return {
         modal: false,
-        message: ''
+        message: '',
+        movie : null,
+        imgUrl: '',
       }
     },
     methods: {
-      openModal() {
-        this.modal = true
+      openModal(submitData) {
+        console.log(submitData)
+        this.modal = submitData.modal
+        this.movie = submitData.movie
+        console.log(this.movie)
+        this.imgUrl = 'https://image.tmdb.org/t/p/w220_and_h330_face/' + this.movie.poster_path
+        
       },
       closeModal() {
         this.modal = false
@@ -53,7 +59,13 @@ export default {
         } else {
           alert('메시지를 입력해주세요.')
         }
-      }
+      },
+      // computed: {
+      //   imgUrl() {
+      //     const url = 'https://image.tmdb.org/t/p/w220_and_h330_face/' + this.movie.poster_path
+      //     return url
+      //   }
+      // }
     }    
 }
 </script>

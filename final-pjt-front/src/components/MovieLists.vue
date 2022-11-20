@@ -8,6 +8,7 @@
         v-for="movie in movies"
         :key="movie.id"
         :movie="movie"
+        @to-movie-list="toMovieView"
         />
       </div>
     </div>
@@ -38,6 +39,9 @@ export default {
       getMovies() {
         this.$store.dispatch('getMovies')
       },
+      toMovieView(submitData) {
+        this.$emit('to-movie-view', submitData)
+      }
     }
 
 }
