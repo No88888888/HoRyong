@@ -7,9 +7,9 @@ from . import views
 app_name = 'movies'
 urlpatterns = [
     # path("", views.index, name="index"),
-    path('', views.movie_list, name='movie_list'),
-    path('<int:movie_pk>/detail/', views.movie_detail, name='movie_detail'),
-    path('<int:movie_pk>/detail_review/', views.detail_review, name='detail_review'),
+    path('', views.movie_list, name='movie_list'), # 영화 전체 리스트
+    path('<int:movie_pk>/', views.movie_detail, name='movie_detail'),
+    path('<int:movie_pk>/create_review/', views.create_review, name='create_review'), # 영화 하나에 슬 리뷰
     path('<int:user_pk>/my_review/', views.my_review, name='my_review'),
     path('<int:movie_pk>/wish_list/', views.wish_list, name='wish_list'),
     path('<int:movie_pk>/watched_movie/', views.watched_movie, name='watched_movie'),
