@@ -47,7 +47,6 @@ const routes = [
     name: 'DetailView',
     component: DetailView,
   },
-
 ]
 
 const router = new VueRouter({

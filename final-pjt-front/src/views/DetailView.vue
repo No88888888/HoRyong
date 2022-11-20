@@ -2,25 +2,26 @@
   <div>
     <h1>Detail</h1>
     <div class="single_column">
-      <section id="original_header" class="images inner">
+      <section id="original_header" class="main">
         <!-- 여기가 포스터 -->
-        <div>
-          <div class="poster">
-            <img src="movie.poster_path" alt="movie.title">
-          </div>
-          <div class="ott_offer">
-            <div class="button">
-              <div class="text">
-                <span>
-                  <h4>Now Streaming</h4>
-                  <a class="no_click" href="watchUrl" title="#">Watch Now</a>
-                </span>
-              </div>
+        <div class="poster">
+          <img :src="imgUrl" alt="#">
+        </div>
+        <!-- 여기가 제목 평점 및 내용 -->
+        <div class="movie-info">
+          <h2>{{ movie.title }}</h2>
+          <p>{{ movie.overview }}</p>
+        </div>
+        <div class="ott_offer">
+          <div class="button">
+            <div class="text">
+              <span>
+                <h4>Now Streaming</h4>
+                <a class="no_click" :href="renderwatchUrl" title="#" target="_blank">Watch Now</a>
+              </span>
             </div>
           </div>
         </div>
-        <!-- 여기가 제목 평점 및 내용 -->
-        <div></div>
       </section>
     </div>
 
@@ -39,6 +40,12 @@ export default {
       movie: null,
       watchUrl: null,
       tmdbAPIKey: 'eb54cff7c77bbeb1441eaa6be7f211a1',
+      imgUrl: '',
+    }
+  },
+  computed: {
+    renderwatchUrl() {
+      return this.watchUrl
     }
   },
   created() {
@@ -48,12 +55,12 @@ export default {
     getMovieDetail() {
       axios({
         method: 'get',
-        url: `${API_URL}/movies/${this.$route.params.id}/detail`
+        url: `${API_URL}/movies/${this.$route.params.id}/`
       })
         .then((res) => {
-          console.log(1,res)
           this.movie = res.data
-          console.log(this.movie)
+          this.imgUrl = 'https://image.tmdb.org/t/p/w220_and_h330_face/' + this.movie.poster_path
+          return res.data
         })
         .then((res) => {
           console.log(2,res)
@@ -66,10 +73,12 @@ export default {
     getWatchUrl() {
       axios({
         method: 'get',
-        url: `https://api.themoviedb.org/3/movie/${this.movie.id}/watch/providers?api_key=${this.tmdbAPIKey}`
+        url: `https://api.themoviedb.org/3/movie/${this.movie.movie_id}/watch/providers?api_key=${this.tmdbAPIKey}`
       })
         .then((res) => {
-          console.log(res)
+          console.log(res.data.results.KR.link)
+          this.watchUrl = res.data.results.KR.link
+          return this.watchUrl
         })
     }
   }
@@ -77,5 +86,18 @@ export default {
 </script>
 
 <style>
-
+.single_column{
+  align-content: center;
+  justify-content: center;
+}
+.main .poster{
+	float: left;
+	width: 100px;
+	height: 254px;
+	background-color: orange;
+}
+.main .movie-info{
+	float: left;
+	width: 800px;
+}
 </style>

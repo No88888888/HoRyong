@@ -35,9 +35,9 @@ nav a.router-link-exact-active {
 }
 
 body {
-	background: linear-gradient(-45deg, #ffffff, #3ac047, #1f16c6, #bd2323);
+	background: linear-gradient(-45deg, #ffffff, #000000, #ffffff, #000000);
 	background-size: 400% 400%;
-	animation: gradient 5s ease infinite;
+	animation: gradient 10s ease infinite;
 	height: 100vh;
 }
 
@@ -52,4 +52,5 @@ body {
 		background-position: 0% 50%;
 	}
 }
+
 </style>

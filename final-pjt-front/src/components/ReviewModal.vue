@@ -45,8 +45,13 @@ export default {
   }
 
   &-content {
-    padding: 10px 20px;
+    padding: 5px 5px;
+    background: linear-gradient(-45deg, #ffffff, #000000, #ffffff, #000000);
+    animation: gradient ease infinite;
+    animation-name : modal-gradiation
+    background-size : 200%, 200%
   }
+  
 
   &-footer {
     background: #ccc;
@@ -78,5 +83,4 @@ export default {
     transform: translateY(-20px);
   }
 }
-
 </style>

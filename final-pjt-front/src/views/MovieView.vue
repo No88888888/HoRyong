@@ -71,5 +71,9 @@ export default {
 </script>
 
 <style>
-
+h1 {
+    font-size: 60px;
+    color: linear-gradient(to right top, #000000, #ffffff);
+    animation: gradient 10s ease infinite;
+}
 </style>
