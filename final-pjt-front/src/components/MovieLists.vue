@@ -1,13 +1,15 @@
 <template>
   <div class="movie-lists">
-    <h3>Movie List</h3>
-    <div class="wrap-vertical"> 
-      <MovieListsItem
-      class="movie-items"
-      v-for="movie in movies"
-      :key="movie.id"
-      :movie="movie"
-      />
+    <div>
+      <h3>Movie List</h3>
+      <div class="wrap-vertical"> 
+        <MovieListsItem
+        class="movie-items"
+        v-for="movie in movies"
+        :key="movie.id"
+        :movie="movie"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -17,6 +19,10 @@ import MovieListsItem from '@/components/MovieListsItem'
 
 export default {
     name: "MovieLists",
+    data() {
+      return {
+      }
+    },
     components: { 
         MovieListsItem,
     },
@@ -31,7 +37,7 @@ export default {
     methods: {
       getMovies() {
         this.$store.dispatch('getMovies')
-      }
+      },
     }
 
 }

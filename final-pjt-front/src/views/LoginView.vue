@@ -8,7 +8,7 @@
         <label for="password"> password : </label>
         <input type="password" id="password" v-model="password"><br>
   
-        <input type="submit" value="logIn">
+        <input type="submit" value="login">
       </form>
     </div>
   </template>
@@ -23,7 +23,7 @@
       }
     },
     methods: {
-      logIn() {
+      login() {
         const username = this.username
         const password = this.password
   
