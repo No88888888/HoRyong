@@ -48,11 +48,12 @@ export default {
     getMovieDetail() {
       axios({
         method: 'get',
-        url: `${API_URL}/movies/${this.$route.params.id}`
+        url: `${API_URL}/movies/${this.$route.params.id}/detail`
       })
         .then((res) => {
           console.log(1,res)
           this.movie = res.data
+          console.log(this.movie)
         })
         .then((res) => {
           console.log(2,res)
