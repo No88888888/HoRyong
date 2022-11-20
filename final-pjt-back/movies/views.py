@@ -81,6 +81,35 @@ def wish_list(request, user_pk):
             #     pass
     return JsonResponse(serializers, safe=False)
 
+
+# 내가 본영화 넣고 빼고 함수
+# 프론트에게 내가 본 영화 전체의 movie_id를 담아 전달
+@csrf_exempt
+@require_POST
+def watched_movie(request, movie_pk):
+    request.user.pk = 1
+    watchedmovie = WatchedMovie.objects.all()
+    my_watch_movie = []
+    for i in watchedmovie:
+        if i.user_id == request.user.pk:
+            my_watch_movie.append(i.movie_id)
+    for i in watchedmovie:
+        if i.movie_id == movie_pk and i.user_id == request.user.pk:
+            delete_id= i.id
+            watchmovie = get_object_or_404(WatchedMovie, pk=delete_id)
+            watchmovie.delete()
+            my_watch_movie.remove(movie_pk)
+            break
+    else:
+        added_watched_movie = WatchedMovie(
+            user_id = request.user.pk,
+            movie_id = movie_pk
+        )
+        added_watched_movie.save()
+        my_watch_movie.append(added_watched_movie.movie_id)
+    return JsonResponse(my_watch_movie, safe=False)
+
+
 # TODO: 위시리스트 어덯게 해야하지
 # @require_POST
 # def follow(request, movie_pk):
@@ -99,72 +128,6 @@ def wish_list(request, user_pk):
 #                 you.followers.add(me)
 #         return redirect('accounts:profile', you.username)
 #     return redirect('accounts:login')
-
-# TODO: 워치드무비 넣다뻈다 구현
-@csrf_exempt
-@require_POST
-def watched_movie(request, movie_pk):
-    request.user.pk = 1
-    watchedmovie_list = []
-    if WatchedMovie.objects.all():
-        watchedmovie = WatchedMovie.objects.all()
-        if WatchedMovie.objects.get(pk=movie_pk):
-            for i in watchedmovie:
-                if i.movie_id == movie_pk:
-                    watchedmovie_list.append(i)
-                    # watchedmovie_list.append(i.movie_id.filter(pk=movie_pk).exists())
-            for j in watchedmovie_list:
-                if j.user_id == request.user.pk:
-                    print(watchedmovie)
-                    # watchedmovie.user_id.remove(request.user.pk)
-                    watchedmovie.remove(j)
-                    print(watchedmovie)
-            else:
-                added_watched_movie = WatchedMovie(
-                    user_id = request.user.pk,
-                    movie_id = movie_pk
-                )
-                added_watched_movie.save()
-        else:
-                added_watched_movie = WatchedMovie(
-                    user_id = request.user.pk,
-                    movie_id = movie_pk
-                )
-                added_watched_movie.save()
-    else:
-        added_watched_movie = WatchedMovie(
-            user_id = request.user.pk,
-            movie_id = movie_pk,
-        )
-        print(added_watched_movie)
-        added_watched_movie.save()
-    watchedmovie = WatchedMovie.objects.all()
-    print(type(watchedmovie))
-    return Response(watchedmovie, safe=False)
-        
-        
-    # movie = get_object_or_404(Movies, pk=movie_pk)
-    # watchedmovie_list = []
-    # # 해당 영화가 워치드무비에 있는지 찾는다
-    # # 있다면
-    #     # 현재 요청한 reqeust.user.pk가 있다면
-    #         # 워치드무비에서 삭제
-    #     # 없다면
-    #     # 워치드 무비 추가
-    # # 없다면
-    #     # 워치드 무비에 추가
-            
-    # if watchedmovie.movie_id.filter(pk=movie_pk).exists():
-    #     watchedmovie_list = watchedmovie.movie_id.filter(pk=movie_pk)
-    #     if watchedmovie_list.user_id.filter(pk=request.user.pk).exist():
-    #         watchedmovie_list.user_id.remove(request.user.pk)
-    # else:
-    #     movie.pk.add(request.user.pk)
-        
-    # pass
-
-
-
 
 
 
