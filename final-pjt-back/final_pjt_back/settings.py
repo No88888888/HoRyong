@@ -35,6 +35,15 @@ INSTALLED_APPS = [
     'movies',
     'keyword_extractor',
     'rest_framework',
+    # Auth
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    # registration
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
     'corsheaders',
     'django_extensions',
     'django.contrib.admin',
