@@ -13,7 +13,7 @@ from rest_framework.decorators import permission_classes
 from django.views.decorators.http import require_http_methods, require_POST, require_safe
 from rest_framework.permissions import IsAuthenticated
 from .models import Movies, Reviews, WatchedMovie, WishList
-from .serializer import ReviewsSerializer, WishListSerializer
+from .serializer import ReviewsSerializer, WishListSerializer, MoviesSerializer
 from django.views.decorators.csrf import csrf_exempt
 
 
@@ -38,17 +38,13 @@ def movie_list(request):
         )
     return JsonResponse(movies_list, safe=False)
 
-
-def movie_detail(request):
+@api_view(['GET'])
+def movie_detail(request, movie_pk):
+    movie = get_object_or_404(Movies, pk=movie_pk)
+    if request.method == 'GET':
+        serializer = MoviesSerializer(movie)
+        return Response(serializer.data)
     
-    pass
-    
-def create_review(request):
-    
-    pass
-    
-# def detail_review(request):
-#     pass
 
 @api_view(['GET'])
 def my_review(request, user_pk):
@@ -63,7 +59,9 @@ def my_review(request, user_pk):
     return JsonResponse(serializers, safe=False)
         
 
-
+# 내 리뷰 수정하는 함수
+# 1. 내 프로필의 내 리뷰 페이지에서 리뷰 수정 시 해당 리뷰 수정한 data 수정 후 반환
+# 2. 내 프로필의 내 리뷰 페이지에서 리뷰 삭제 시 해당 리뷰 삭제 후 나머지 내 리뷰 반환
 @api_view(['PUT', 'DELETE'])
 def modify_myreview(request, user_pk, movie_pk):
     review_data = get_list_or_404(Reviews)
@@ -78,15 +76,17 @@ def modify_myreview(request, user_pk, movie_pk):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
+        
     elif request.method == 'DELETE':
         review = Reviews.objects.get(user_id=user_pk, movie_id=movie_pk)
-        my_review.pop(my_review.index(review))
+        # my_review.pop(my_review.index(review))
         review.delete()
-        serializer = ReviewsSerializer(my_review, many=True)
-        return Response(serializer.data)
+        # serializer = ReviewsSerializer(my_review, many=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
+# 내 위시리스트 전체 보내주는 함수
+# 위시 리스트가 없을 수 있으므로 없으면 빈 리스트 반환
 @api_view(['GET'])
 def wish_list(request):
     wishlist_data = WishList.objects.all()
@@ -101,6 +101,10 @@ def wish_list(request):
             return JsonResponse(wishlist_data, safe=False)
     return JsonResponse(serializers, safe=False)
 
+
+# 내 영화 위시 리스트 넣고 빼고 지우는 함수
+# 1. 추천페이지에서 위시리스트 토글 클릭 시 위시 리스트에 넣고 뺌
+# 2. 내 프로필의 내 위시리스트 화면에서 삭제 시 위시 리스트레서 뺌
 @csrf_exempt
 @api_view(['POST', 'DELETE'])
 def modify_wishlist(request, movie_pk):
@@ -136,8 +140,8 @@ def modify_wishlist(request, movie_pk):
     return Response(serializer.data)
 
 
-# 내가 본영화 넣고 빼고 함수
-# 프론트에게 내가 본 영화 전체의 movie_id를 담아 전달
+# 내가 본영화 넣고 빼는 함수
+# 내가 본 영화 전체의 movie_id를 담아 프론트에게 전달
 @csrf_exempt
 @require_POST
 def watched_movie(request, movie_pk):
@@ -164,6 +168,84 @@ def watched_movie(request, movie_pk):
             my_watch_movie.append(added_watched_movie.movie_id)
         return JsonResponse(my_watch_movie, safe=False)
 
+import sys
+sys.path.append('../')
+import krwordrank
+from krwordrank.hangle import normalize
+from krwordrank.word import KRWordRank
+
+
+
+# 리뷰 토크나이저
+def get_texts_scores(fname):
+    # `fname` 파일은 영화평과 평점이 '&&' 으로 구분된 .txt 파일입니다.
+    with open(fname, encoding='utf-8') as f:
+        docs = [doc.lower().replace('\n', '').split('&&') for doc in f]
+        docs = [doc for doc in docs if len(doc) == 2]
+        docs = [doc for doc in docs if len(doc) == 2]
+
+        if not docs:
+            return [], []
+
+        texts, scores = zip(*docs)
+        return list(texts), list(scores)
+    
+def get_from_list(l, i, default=('', 0)):
+    if len(l) <= i:
+        return default
+    else:
+        return l[i]
+    
+    
+def keyword_extractor():
+
+    beta = 0.85    # PageRank의 decaying factor beta
+    max_iter = 10
+
+    top_keywords = []
+    # TODO: 유저가 리뷰 작성하는 영화의 리뷰 데이터를 fnames로 가져오기
+    fnames = './data/A Werewolf Boy (1).txt'
+    
+    texts, scores = get_texts_scores(fnames)
+
+    wordrank_extractor = KRWordRank(min_count=5, max_length=10, verbose=False)
+
+    keywords, rank, graph = wordrank_extractor.extract(texts, beta, max_iter)
+
+    top_keywords.append(sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:100])
+    top_keywords = sum(top_keywords,[])
+    
+    
+    keyword_counter = {}
+    for keywords in top_keywords:
+        words, ranks = keywords
+        for word in words:
+            keyword_counter[word] = keyword_counter.get(word, 0) + 1
+
+    # 커먼키워드 DB에서 가져와서 비교해야함(11.18)
+    # TODO: 커먼키워드 DB에서 가져와 set형태로 저장
+    common_keywords = {word for word, count in keyword_counter.items()}
+    common_keywords = {'송중기', '영화', '정말'}
+    selected_top_keywords = []
+
+    for keywords in top_keywords:
+        keywords = [keywords]
+        # print(keywords)
+        for word, r in keywords:
+            if word in common_keywords:
+                # print(common_keywords)
+                continue
+            selected_top_keywords.append((word, r))
+    # print(selected_top_keywords)
+    for k in range(len(selected_top_keywords)):
+        res = get_from_list(selected_top_keywords, k)
+        # TODO: 산출되서 나온 결과값을 해당 영화 키워드로 저장, 이미 있는 키워드면 가중치를 새로 나온것으로 수정, 없으면 추가
+        print(res[0], res[1])
+
+
+def create_review(request):
+    
+    pass
 
 # TODO: 위시리스트 어덯게 해야하지
 # @require_POST

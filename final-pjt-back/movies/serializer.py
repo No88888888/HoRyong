@@ -21,7 +21,11 @@ from .models import Movies, Reviews, WishList, WatchedMovie
         # read_only_fields = ('user' )
 
 
-
+class MoviesSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Movies
+        fields = '__all__'
 
 class ReviewsSerializer(serializers.ModelSerializer):
     class MyReviewSerializer(serializers.ModelSerializer):
