@@ -1,1 +1,5 @@
-DELETE FROM movies_movies;
+DROP TABLE movies_movies;
+
+-- DELETE FROM movies_movies;
+
+-- DELETE FROM movies_watchedmovie;

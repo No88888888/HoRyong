@@ -14,14 +14,15 @@ from django.views.decorators.http import require_http_methods, require_POST, req
 from rest_framework.permissions import IsAuthenticated
 from .models import Movies, Reviews, WatchedMovie, WishList
 from .serializer import ReviewsSerializer, WishListSerializer
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 def movie_list(request):
     movies = Movies.objects.all()
-    movies = []
-    
+    movies_list = []
     for movie in movies:
-        movies.append(
+        movies_list.append(
             {
                 'id' : movie.pk,
                 'movie_id' : movie.movie_id,
@@ -35,7 +36,7 @@ def movie_list(request):
                 'vote_average' : movie.vote_average,
             }
         )
-    return JsonResponse(movies, safe=False)
+    return JsonResponse(movies_list, safe=False)
 
 
 def movie_detail(request):
@@ -63,6 +64,7 @@ def my_review(request, user_pk):
                 pass
     return JsonResponse(serializers, safe=False)
 
+
 @api_view(['GET', 'POST'])
 def wish_list(request, user_pk):
     wishlist_data = get_list_or_404(WishList)
@@ -80,32 +82,83 @@ def wish_list(request, user_pk):
     return JsonResponse(serializers, safe=False)
 
 # TODO: 위시리스트 어덯게 해야하지
-@require_POST
-def follow(request, user_pk):
-    if request.user.is_authenticated:
-        User = get_user_model()
-        me = request.user
-        you = User.objects.get(pk=user_pk)
-        if me != you:
-            # 내가 (request.user) 그 사람의 팔로워 목록에 있다면
-            # if me in you.followers.all():
-            if you.followers.filter(pk=me.pk).exists():
-                #언팔로우
-                you.followers.remove(me)
-            else:
-                # 팔로우
-                you.followers.add(me)
-        return redirect('accounts:profile', you.username)
-    return redirect('accounts:login')
+# @require_POST
+# def follow(request, movie_pk):
+#     if request.user.is_authenticated:
+#         User = get_user_model()
+#         me = request.user
+#         you = User.objects.get(pk=user_pk)
+#         if me != you:
+#             # 내가 (request.user) 그 사람의 팔로워 목록에 있다면
+#             # if me in you.followers.all():
+#             if you.followers.filter(pk=me.pk).exists():
+#                 #언팔로우
+#                 you.followers.remove(me)
+#             else:
+#                 # 팔로우
+#                 you.followers.add(me)
+#         return redirect('accounts:profile', you.username)
+#     return redirect('accounts:login')
 
 # TODO: 워치드무비 넣다뻈다 구현
+@csrf_exempt
 @require_POST
 def watched_movie(request, movie_pk):
-    watchedmovie = get_object_or_404(WatchedMovie, pk=movie_pk)
-    if watchedmovie.movie_id.filter(pk=request.user.pk).exists():
-        watchedmovie.movie_id.remove(request.user)        
+    request.user.pk = 1
+    watchedmovie_list = []
+    if WatchedMovie.objects.all():
+        watchedmovie = WatchedMovie.objects.all()
+        if WatchedMovie.objects.get(pk=movie_pk):
+            for i in watchedmovie:
+                if i.movie_id == movie_pk:
+                    watchedmovie_list.append(i)
+                    # watchedmovie_list.append(i.movie_id.filter(pk=movie_pk).exists())
+            for j in watchedmovie_list:
+                if j.user_id == request.user.pk:
+                    watchedmovie.user_id.remove(request.user.pk)
+            else:
+                added_watched_movie = WatchedMovie(
+                    user_id = request.user.pk,
+                    movie_id = movie_pk
+                )
+                added_watched_movie.save()
+        else:
+                added_watched_movie = WatchedMovie(
+                    user_id = request.user.pk,
+                    movie_id = movie_pk
+                )
+                added_watched_movie.save()
+    else:
+        added_watched_movie = WatchedMovie(
+            user_id = request.user.pk,
+            movie_id = movie_pk,
+        )
+        print(added_watched_movie)
+        added_watched_movie.save()
+    watchedmovie = WatchedMovie.objects.all()
+    print(type(watchedmovie))
+    return Response(watchedmovie, safe=False)
         
-    pass
+        
+    # movie = get_object_or_404(Movies, pk=movie_pk)
+    # watchedmovie_list = []
+    # # 해당 영화가 워치드무비에 있는지 찾는다
+    # # 있다면
+    #     # 현재 요청한 reqeust.user.pk가 있다면
+    #         # 워치드무비에서 삭제
+    #     # 없다면
+    #     # 워치드 무비 추가
+    # # 없다면
+    #     # 워치드 무비에 추가
+            
+    # if watchedmovie.movie_id.filter(pk=movie_pk).exists():
+    #     watchedmovie_list = watchedmovie.movie_id.filter(pk=movie_pk)
+    #     if watchedmovie_list.user_id.filter(pk=request.user.pk).exist():
+    #         watchedmovie_list.user_id.remove(request.user.pk)
+    # else:
+    #     movie.pk.add(request.user.pk)
+        
+    # pass
 
 
 

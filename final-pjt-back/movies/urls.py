@@ -11,10 +11,10 @@ urlpatterns = [
     path('<int:movie_pk>/detail/', views.movie_detail, name='movie_detail'),
     path('<int:movie_pk>/detail_review/', views.detail_review, name='detail_review'),
     path('<int:user_pk>/my_review/', views.my_review, name='my_review'),
-    path('<int:user_pk>/wish_list/', views.wish_list, name='wish_list'),
+    path('<int:movie_pk>/wish_list/', views.wish_list, name='wish_list'),
     path('<int:movie_pk>/watched_movie/', views.watched_movie, name='watched_movie'),
     # path('<int:movie_pk>/review_create/', views.review_create, name='review_create'),
-    # path('test/', get_movie.get_movie)
+    # path('test/', get_movie.get_movie),
     # path('test2/', views_2.keyword_extractor_many,),
 ]
     
