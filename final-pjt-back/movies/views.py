@@ -168,6 +168,10 @@ def watched_movie(request, movie_pk):
             my_watch_movie.append(added_watched_movie.movie_id)
         return JsonResponse(my_watch_movie, safe=False)
 
+def recommend_page(request, movie_pk):
+    
+    pass
+
 import sys
 sys.path.append('../')
 import krwordrank
@@ -246,6 +250,7 @@ def keyword_extractor():
 def create_review(request):
     
     pass
+
 
 # TODO: 위시리스트 어덯게 해야하지
 # @require_POST
