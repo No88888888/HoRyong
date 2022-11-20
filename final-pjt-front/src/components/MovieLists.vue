@@ -21,6 +21,14 @@ export default {
       movies() {
         return this.$store.state.movies
       }
+    },
+    created() {
+      this.getMovies()
+    },
+    methods: {
+      getMovies() {
+        this.$store.dispatch('getMovies')
+      }
     }
 
 }

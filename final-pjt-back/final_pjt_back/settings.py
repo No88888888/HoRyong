@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'movies',
     'keyword_extractor',
     'rest_framework',
+    'corsheaders',
     'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -73,6 +75,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'final_pjt_back.wsgi.application'
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8080',
+]
+
 
 
 # Database
