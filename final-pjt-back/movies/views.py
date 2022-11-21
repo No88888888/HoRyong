@@ -107,17 +107,16 @@ def wish_list(request):
 # 2. 내 프로필의 내 위시리스트 화면에서 삭제 시 위시 리스트레서 뺌
 @csrf_exempt
 @api_view(['POST', 'DELETE'])
-def modify_wishlist(request, movie_pk):
-    request.user.pk = 1
+def modify_wishlist(request, movie_pk, user_pk):
     wishlist = WishList.objects.all()
     my_wish_movie = []
     for i in wishlist:
-        if i.user_id == request.user.pk:
+        if i.user_id == user_pk:
             my_wish_movie.append(i)
     # print(my_wish_movie)
     if request.method == 'POST':
         for i in wishlist:
-            if i.movie_id == movie_pk and i.user_id == request.user.pk:
+            if i.movie_id == movie_pk and i.user_id == user_pk:
                 delete_id= i.id
                 wishmovie = get_object_or_404(WishList, pk=delete_id)
                 my_wish_movie.pop(my_wish_movie.index(wishmovie))
@@ -125,14 +124,14 @@ def modify_wishlist(request, movie_pk):
                 break
         else:
             added_wish_movie = WishList(
-                user_id = request.user.pk,
+                user_id = user_pk,
                 movie_id = movie_pk
             )
             added_wish_movie.save()
             my_wish_movie.append(added_wish_movie)
             print('1',my_wish_movie)
     elif request.method == 'DELETE':
-        wishmovie = WishList.objects.get(movie_id=movie_pk, user_id=request.user.pk)
+        wishmovie = WishList.objects.get(movie_id=movie_pk, user_id=user_pk)
         my_wish_movie.pop(my_wish_movie.index(wishmovie))
         # print('2', my_wish_movie)
         wishmovie.delete()
@@ -146,7 +145,6 @@ def modify_wishlist(request, movie_pk):
 @require_POST
 def watched_movie(request, movie_pk):
     if request.user.is_authenticated:
-        request.user.pk = 1
         watchedmovie = WatchedMovie.objects.all()
         my_watch_movie = []
         for i in watchedmovie:
@@ -186,12 +184,10 @@ def get_texts_scores(fname):
     # with open(fname, encoding='utf-8') as f:
     docs = [doc.lower().replace('\n', '').split('&&') for doc in fname]
     docs = [doc for doc in docs if len(doc) == 2]
-    # print('######',docs)
     if not docs:
         return [], []
 
     texts, scores = zip(*docs)
-    # print(texts, scores)
     return list(texts), list(scores)
     
 def get_from_list(l, i, default=('', 0)):
@@ -200,59 +196,90 @@ def get_from_list(l, i, default=('', 0)):
     else:
         return l[i]
     
+def keyword_renewal(movie_pk, user_pk):
+
+    beta = 0.85    # PageRank의 decaying factor beta
+    max_iter = 10
+
+    top_keywords = []
+    # TODO: 유저가 리뷰 작성하는 영화의 리뷰 데이터를 fnames로 가져오기
+    fnames = []
+    reviews = Reviews.objects.all()
+    modify_rev = []
+    for review in reviews:
+        if review.movie_id == movie_pk:
+            modify_rev.append(review)
+            review_txt = review.sentence + '&&' + str(review.score)
+            fnames.append(review_txt)
+            
+    for fname in fnames:
+        texts, scores = get_texts_scores(fname)
+
+        wordrank_extractor = KRWordRank(min_count=5, max_length=10, verbose=False)
+
+        keywords, rank, graph = wordrank_extractor.extract(texts, beta, max_iter)
+
+        top_keywords.append(sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:100])
+
+
+    # 모든 영화들에서 키워드의 숫자를 셈
+    keyword_counter = {}
+    for keywords in top_keywords:
+        words, ranks = zip(*keywords)
+        for word in words:
+            keyword_counter[word] = keyword_counter.get(word, 0) + 1
+
+    # 커먼키워드 DB에서 가져와서 비교해야함(11.18)
+    # TODO: 커먼키워드 DB에서 가져와 set형태로 저장
+    get_common_keywords = CommonKeyword.objects.all()
+    common_keywords = []
+    for ck in get_common_keywords:
+        common_keywords.append(ck.common_keyword)
+
+    # common_keywords를 제외한 진짜 키워드만을 추출하여 selected_top_keywords에 영화별로 담음
+    selected_top_keywords = []
+    for keywords in top_keywords:
+        selected_keywords = []
+        for word, r in keywords:
+            if word in common_keywords:
+                continue
+            selected_keywords.append((word, r))
+        selected_top_keywords.append(selected_keywords)
     
-# def keyword_extractor():
-
-#     beta = 0.85    # PageRank의 decaying factor beta
-#     max_iter = 10
-
-#     top_keywords = []
-#     # TODO: 유저가 리뷰 작성하는 영화의 리뷰 데이터를 fnames로 가져오기
-#     fnames = './data/A Werewolf Boy (1).txt'
-    
-#     texts, scores = get_texts_scores(fnames)
-
-#     wordrank_extractor = KRWordRank(min_count=5, max_length=10, verbose=False)
-
-#     keywords, rank, graph = wordrank_extractor.extract(texts, beta, max_iter)
-
-#     top_keywords.append(sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:100])
-#     top_keywords = sum(top_keywords,[])
-    
-    
-#     keyword_counter = {}
-#     for keywords in top_keywords:
-#         words, ranks = keywords
-#         for word in words:
-#             keyword_counter[word] = keyword_counter.get(word, 0) + 1
-
-#     # 커먼키워드 DB에서 가져와서 비교해야함(11.18)
-#     # TODO: 커먼키워드 DB에서 가져와 set형태로 저장
-#     common_keywords = {word for word, count in keyword_counter.items()}
-#     common_keywords = {'송중기', '영화', '정말'}
-#     selected_top_keywords = []
-
-#     for keywords in top_keywords:
-#         keywords = [keywords]
-#         # print(keywords)
-#         for word, r in keywords:
-#             if word in common_keywords:
-#                 # print(common_keywords)
-#                 continue
-#             selected_top_keywords.append((word, r))
-#     # print(selected_top_keywords)
-#     for k in range(len(selected_top_keywords)):
-#         res = get_from_list(selected_top_keywords, k)
-#         # TODO: 산출되서 나온 결과값을 해당 영화 키워드로 저장, 이미 있는 키워드면 가중치를 새로 나온것으로 수정, 없으면 추가
-#         print(res[0], res[1])
-
+    keywords = Keyword.objects.all()
+    keyword_list = []
+    only_keyword_list = []
+    for i in keywords:
+        if i.movie_id == movie_pk:
+            keyword_list.append(i)
+            only_keyword_list.append(i.keyword)
+    for k in range(len(selected_top_keywords)):
+        res = get_from_list(selected_top_keywords, k)
+        # TODO: 산출되서 나온 결과값을 해당 영화 키워드로 저장, 이미 있는 키워드면 가중치를 새로 나온것으로 수정, 없으면 추가
+        if res[0] not in only_keyword_list:
+            added_keyword = Keyword(
+                    keyword = res[0],
+                    keyword_score = res[1],
+                    movie_id = movie_pk,
+            )
+            added_keyword.save()
+        else:
+            for j in keyword_list:
+                if j.keyword == res[0] and j.keyword_score != res[1]:
+                    j.delete()
+                    added_keyword = Keyword(
+                        keyword = res[0],
+                        keyword_score = res[1],
+                        movie_id = movie_pk,
+                    )
+                    added_keyword.save()
+            
 
 @csrf_exempt
 @api_view(['POST'])
 def create_review(request, movie_pk):
 
     # 유저가 작성한 리뷰에서 키워드를 추출
-    # beta = 0.85    # PageRank의 decaying factor beta
     beta = 0.85    # PageRank의 decaying factor beta
     max_iter = 10
 
@@ -270,6 +297,8 @@ def create_review(request, movie_pk):
         user_id = request.user.pk
     )
     added_review.save()
+    
+    keyword_renewal(movie_pk, request.user.pk)
 
     # 텍스트와 스코어를 분리
     texts, scores = get_texts_scores(fnames)
@@ -309,34 +338,18 @@ def create_review(request, movie_pk):
             if len(reco_movies) == 3:
                 break
         # print(len(set(reco_movies)))
-        print(reco_movies)
-        print(reco_movies[0])
         reco_movies1 = sorted(reco_movies[0], key=lambda x:x.keyword_score, reverse=True)[:3]
         reco_movies2 = sorted(reco_movies[1], key=lambda x:x.keyword_score, reverse=True)[:3]
         reco_movies3 = sorted(reco_movies[2], key=lambda x:x.keyword_score, reverse=True)[:3]
         
-        # print('1', reco_movies1[0].keyword)
-        # print('2', reco_movies2)
-        # print('2', reco_movies2[0].keyword)
-        # print('3', reco_movies3)
-        # print('3', reco_movies3[0].keyword)
-        # reco_movies1 = sorted(reco_movies1, key=lambda x:x.keyword_score, reverse=True)[:3]
-        # reco_movies2 = sorted(reco_movies2, key=lambda x:x.keyword_score, reverse=True)[:3]
-        # reco_movies3 = sorted(reco_movies3, key=lambda x:x.keyword_score, reverse=True)[:3]
         reco_movies1 = random.sample(reco_movies1, 1)
         reco_movies2 = random.sample(reco_movies2, 1)
         reco_movies3 = random.sample(reco_movies3, 1)
-        # reco_movies1 = Movies.objects.get(pk=reco_movies1)
-        # reco_movies2 = Movies.objects.get(pk=reco_movies2)
-        # reco_movies3 = Movies.objects.get(pk=reco_movies3)
         reco_mov = []
         reco_mov.append(reco_movies1)
         reco_mov.append(reco_movies2)
         reco_mov.append(reco_movies3)
         reco_mov = sum(reco_mov, [])
-        print(reco_mov)
-        # # print('last', reco_movies)
-        # serializer = MoviesSerializer(reco_movies, many=True)
         serializer = KeywordsSerializer(reco_mov, many=True)
         return Response(serializer.data)        
     else:
