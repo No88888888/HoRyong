@@ -3,7 +3,7 @@
 # from rest_framework.decorators import api_view
 # from rest_framework import status
 # Create your views here.
-from .models import CommonKeyword
+from .models import CommonKeyword, Keyword
 
 import sys
 sys.path.append('../')
@@ -118,15 +118,20 @@ def keyword_extractor_many(request):
             keyword_counter[word] = keyword_counter.get(word, 0) + 1
 
     # keyword_counter에서 영화의 개수만큼 나온 키워드를 common_keywords에 저장함(영화, 진짜 등등)
-    common_keywords = [word for word, count in keyword_counter.items() if count >= 8]
+    # common_keywords = [word for word, count in keyword_counter.items() if count >= 8]
     
-    for j in common_keywords:
+    # for j in common_keywords:
         
-        add_common_keywords = CommonKeyword(
-            common_keyword = j,
-        )
-        add_common_keywords.save()
-        
+    #     add_common_keywords = CommonKeyword(
+    #         common_keyword = j,
+    #     )
+    #     add_common_keywords.save()
+    
+    # 커먼키워드 DB에서 커먼키워드 가져오기
+    get_common_keywords = CommonKeyword.objects.all()
+    common_keywords = []
+    for ck in get_common_keywords:
+        common_keywords.append(ck.common_keyword)
         
     print('커먼 키워드:', common_keywords)
     print('커먼 키워드 개수:',len(common_keywords))
@@ -154,12 +159,13 @@ def keyword_extractor_many(request):
             res = get_from_list(selected_top_keywords[i], k)
             # 영화의 키워드가 커먼 키워드와 겹치면 통과
             if res[0] not in common_keywords:
-                pass
                 # print(cnt, movie_ids[i], res[0], res[1])
-        cnt_list.append(cnt)
+                added_keyword = Keyword(
+                    movie_id = i+1,
+                    keyword = res[0],
+                    keyword_score = res[1],
+                )
+                added_keyword.save()
+    #     cnt_list.append(cnt)
     # print(cnt_list)
-            # Keyword(
-                
-            # )
-                
         
