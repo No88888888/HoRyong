@@ -79,7 +79,7 @@ export default new Vuex.Store({
         data: {
           username: payload.username,
           password: payload.password,
-        }
+        },
       })
         .then((res) => {
           console.log(res)
@@ -94,6 +94,9 @@ export default new Vuex.Store({
         data: {
           sentence: payload.sentence,
           score: payload.score,
+        },
+        headers: {
+          Authorization: `Token ${context.state.token}`
         }
       })
         .then((res) =>{
