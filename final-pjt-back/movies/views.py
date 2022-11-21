@@ -264,13 +264,13 @@ def create_review(request, movie_pk):
     print(fnames)
     
     # 새로 작성된 리뷰를 DB에 저장
-    added_review = Reviews(
-        sentence = request.data['sentence'],
-        score = str(request.data['score']),
-        movie_id = movie_pk,
-        user_id = request.user.pk
-    )
-    added_review.save()
+    # added_review = Reviews(
+    #     sentence = request.data['sentence'],
+    #     score = str(request.data['score']),
+    #     movie_id = movie_pk,
+    #     user_id = request.user.pk
+    # )
+    # added_review.save()
 
     # 텍스트와 스코어를 분리
     texts, scores = get_texts_scores(fnames)
