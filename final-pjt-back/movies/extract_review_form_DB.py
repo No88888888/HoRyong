@@ -91,26 +91,3 @@ def keyword_extractor():
         # TODO: 산출되서 나온 결과값을 해당 영화 키워드로 저장, 이미 있는 키워드면 가중치를 새로 나온것으로 수정, 없으면 추가
         print(res[0], res[1])
 
-@csrf_exempt
-@api_view(['POST'])
-def create_review(request):
-
-    # 유저가 작성한 리뷰에서 키워드를 추출
-    beta = 0.85    # PageRank의 decaying factor beta
-    max_iter = 10
-
-    top_keywords = []
-    
-    # fnames = './data/A Werewolf Boy (1).txt'
-    fnames = request.data
-    print(fnames)
-    
-    texts, scores = get_texts_scores(fnames)
-
-    wordrank_extractor = KRWordRank(min_count=5, max_length=10, verbose=False)
-
-    keywords, rank, graph = wordrank_extractor.extract(texts, beta, max_iter)
-
-    top_keywords.append(sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:100])
-    top_keywords = sum(top_keywords,[])
-    print(top_keywords)

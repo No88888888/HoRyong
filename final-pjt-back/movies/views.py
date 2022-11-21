@@ -266,7 +266,7 @@ def create_review(request, movie_pk):
     # 새로 작성된 리뷰를 DB에 저장
     added_review = Reviews(
         sentence = request.data['sentence'],
-        score = request.data['score'],
+        score = str(request.data['score']),
         movie_id = movie_pk,
         user_id = request.user.pk
     )
