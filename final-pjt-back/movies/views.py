@@ -309,6 +309,8 @@ def create_review(request, movie_pk):
             if len(reco_movies) == 3:
                 break
         # print(len(set(reco_movies)))
+        print(reco_movies)
+        print(reco_movies[0])
         reco_movies1 = sorted(reco_movies[0], key=lambda x:x.keyword_score, reverse=True)[:3]
         reco_movies2 = sorted(reco_movies[1], key=lambda x:x.keyword_score, reverse=True)[:3]
         reco_movies3 = sorted(reco_movies[2], key=lambda x:x.keyword_score, reverse=True)[:3]
