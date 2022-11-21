@@ -14,7 +14,7 @@
       <div><input v-model="message"></div>
       <!-- /default -->
       <div>
-        <star-rating v-model="score" increment="0.5" animate=true glow="10"></star-rating>
+        <star-rating v-model="score" :increment="0.5" :animate=true :glow=10></star-rating>
       </div>
       <!-- footer 슬롯 콘텐츠 -->
       <template slot="footer">
