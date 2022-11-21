@@ -42,17 +42,18 @@ const routes = [
     path: '/login',
     name: 'LoginView',
     component: LoginView
+  },  
+  {
+    path: '/recommend',
+    name: 'RecommendView',
+    component: RecommendView,
   },
   {
     path: '/:id',
     name: 'DetailView',
     component: DetailView,
   },
-  {
-    path: '/recommend',
-    name: 'RecommendView',
-    component: RecommendView,
-  },
+
 ]
 
 const router = new VueRouter({

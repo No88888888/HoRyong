@@ -86,6 +86,9 @@ export default {
 div{
     text-align: center;
 }
+::-webkit-input-placeholder {
+        text-align: center;
+}
 .input {
   
   // needs to be relative so the :focus span is positioned correctly

@@ -45,6 +45,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::-webkit-input-placeholder {
+        text-align: center;
+}
 .input {
   
   // needs to be relative so the :focus span is positioned correctly

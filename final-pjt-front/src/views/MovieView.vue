@@ -78,7 +78,7 @@ export default {
           sentence: this.sendMessage,
           score: this.score*2,
         }
-        console.log(payload)
+        console.log("제출할 때 넘겨 주는 데이터", payload)
         this.$store.dispatch('submitReview', payload)
         router.push({ name: 'RecommendView' })
       },

@@ -86,11 +86,26 @@ export default new Vuex.Store({
           context.state.username = payload.username
         })
     },
+    logout(context) {
+      axios({
+        method: 'post',
+        url: `${API_URL}/accounts/logout/`,
+        data: {
+          username: null,
+          password: null,
+        },
+      })
+        .then((res) => {
+          context.commit('SAVE_TOKEN', res.data.key)
+          context.state.username = null
+        })
+    },
     submitReview(context, payload) {
       axios({
         method: 'post',
         url: `${API_URL}/movies/${payload.pk}/create_review/`,
         data: {
+          movie_pk: payload.pk,
           sentence: payload.sentence,
           score: payload.score,
         },
@@ -99,7 +114,7 @@ export default new Vuex.Store({
         }
       })
         .then((res) =>{
-          console.log(res)
+          console.log("리뷰 제출 데이터", res.data)
           context.commit('RECOMMEND_MOVIE', res.data)
         })
     }
