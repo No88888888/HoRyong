@@ -118,20 +118,20 @@ def keyword_extractor_many(request):
             keyword_counter[word] = keyword_counter.get(word, 0) + 1
 
     # keyword_counter에서 영화의 개수만큼 나온 키워드를 common_keywords에 저장함(영화, 진짜 등등)
-    common_keywords = [word for word, count in keyword_counter.items() if count >= 25]
+    # common_keywords = [word for word, count in keyword_counter.items() if count >= 25]
     
-    for j in common_keywords:
+    # for j in common_keywords:
         
-        add_common_keywords = CommonKeyword(
-            common_keyword = j,
-        )
-        add_common_keywords.save()
+    #     add_common_keywords = CommonKeyword(
+    #         common_keyword = j,
+    #     )
+    #     add_common_keywords.save()
     
     # 커먼키워드 DB에서 커먼키워드 가져오기
-    # get_common_keywords = CommonKeyword.objects.all()
-    # common_keywords = []
-    # for ck in get_common_keywords:
-    #     common_keywords.append(ck.common_keyword)
+    get_common_keywords = CommonKeyword.objects.all()
+    common_keywords = []
+    for ck in get_common_keywords:
+        common_keywords.append(ck.common_keyword)
         
     print('커먼 키워드:', common_keywords)
     print('커먼 키워드 개수:',len(common_keywords))
@@ -166,7 +166,6 @@ def keyword_extractor_many(request):
                     keyword_score = res[1],
                 )
                 added_keyword.save()
-                pass
     #     cnt_list.append(cnt)
     # print(cnt_list)
         

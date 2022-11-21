@@ -27,6 +27,7 @@ class MoviesSerializer(serializers.ModelSerializer):
         model = Movies
         fields = '__all__'
 
+
 class ReviewsSerializer(serializers.ModelSerializer):
     class MyReviewSerializer(serializers.ModelSerializer):
 

@@ -1,5 +1,5 @@
 # from . import get_movie
-# from . import views_2
+from . import views_2
 from django.urls import path
 from . import views
 # from . import extract_review_form_DB
@@ -16,7 +16,7 @@ urlpatterns = [
     path('<int:movie_pk>/watched_movie/', views.watched_movie, name='watched_movie'),
     path('<int:movie_pk>/create_review/', views.create_review, name='create_review'),
     # path('test/', get_movie.get_movie),
-    # path('test2/', views_2.keyword_extractor_many,),
+    path('test2/', views_2.keyword_extractor_many,),
 ]
     
     

@@ -196,7 +196,7 @@ def get_from_list(l, i, default=('', 0)):
     else:
         return l[i]
     
-def keyword_renewal(movie_pk, user_pk):
+def keyword_renewal(movie_pk):
 
     beta = 0.85    # PageRank의 decaying factor beta
     max_iter = 10
@@ -212,45 +212,58 @@ def keyword_renewal(movie_pk, user_pk):
             review_txt = review.sentence + '&&' + str(review.score)
             fnames.append(review_txt)
             
-    for fname in fnames:
-        texts, scores = get_texts_scores(fname)
+    # for fname in fnames:
+    texts, scores = get_texts_scores(fnames)
 
-        wordrank_extractor = KRWordRank(min_count=5, max_length=10, verbose=False)
+    wordrank_extractor = KRWordRank(min_count=5, max_length=10, verbose=False)
 
-        keywords, rank, graph = wordrank_extractor.extract(texts, beta, max_iter)
+    keywords, rank, graph = wordrank_extractor.extract(texts, beta, max_iter)
 
-        top_keywords.append(sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:100])
-
+    top_keywords.append(sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:100])
+    top_keywords = sum(top_keywords,[])
+    
+    print('여기', len(top_keywords))
 
     # 모든 영화들에서 키워드의 숫자를 셈
-    keyword_counter = {}
-    for keywords in top_keywords:
-        words, ranks = zip(*keywords)
-        for word in words:
-            keyword_counter[word] = keyword_counter.get(word, 0) + 1
+    # keyword_counter = {}
+    # for keywords in top_keywords:
+    #     words, ranks = zip(*keywords)
+    #     for word in words:
+    #         keyword_counter[word] = keyword_counter.get(word, 0) + 1
 
-    # 커먼키워드 DB에서 가져와서 비교해야함(11.18)
-    # TODO: 커먼키워드 DB에서 가져와 set형태로 저장
+    # # 커먼키워드 DB에서 가져와서 비교해야함(11.18)
+    # # TODO: 커먼키워드 DB에서 가져와 set형태로 저장
     get_common_keywords = CommonKeyword.objects.all()
     common_keywords = []
     for ck in get_common_keywords:
         common_keywords.append(ck.common_keyword)
 
-    # common_keywords를 제외한 진짜 키워드만을 추출하여 selected_top_keywords에 영화별로 담음
+    # # common_keywords를 제외한 진짜 키워드만을 추출하여 selected_top_keywords에 영화별로 담음
     selected_top_keywords = []
+    # for keywords in top_keywords:
+    #     selected_keywords = []
+    #     for word, r in keywords:
+    #         if word in common_keywords:
+    #             continue
+    #         selected_keywords.append((word, r))
+    #     selected_top_keywords.append(selected_keywords)
+        
     for keywords in top_keywords:
-        selected_keywords = []
+        keywords = [keywords]
+        # selected_keywords = []
         for word, r in keywords:
             if word in common_keywords:
                 continue
-            selected_keywords.append((word, r))
-        selected_top_keywords.append(selected_keywords)
+            # selected_keywords.append((word, r))
+            selected_top_keywords.append((word, r))
+    print(len(selected_top_keywords))
     
     keywords = Keyword.objects.all()
     keyword_list = []
     only_keyword_list = []
     for i in keywords:
         if i.movie_id == movie_pk:
+            print('무비아이디',i.movie_id)
             keyword_list.append(i)
             only_keyword_list.append(i.keyword)
     for k in range(len(selected_top_keywords)):
@@ -263,6 +276,7 @@ def keyword_renewal(movie_pk, user_pk):
                     movie_id = movie_pk,
             )
             added_keyword.save()
+            print('없는 키워드', res[0])
         else:
             for j in keyword_list:
                 if j.keyword == res[0] and j.keyword_score != res[1]:
@@ -273,7 +287,8 @@ def keyword_renewal(movie_pk, user_pk):
                         movie_id = movie_pk,
                     )
                     added_keyword.save()
-            
+                    print('값이 바뀐 키워드', res[0])
+    print('다돌았따!!!')
 
 @csrf_exempt
 @api_view(['POST'])
@@ -292,13 +307,13 @@ def create_review(request, movie_pk):
     # 새로 작성된 리뷰를 DB에 저장
     added_review = Reviews(
         sentence = request.data['sentence'],
-        score = str(request.data['score']),
+        score = request.data['score'],
         movie_id = movie_pk,
         user_id = request.user.pk
     )
     added_review.save()
     
-    keyword_renewal(movie_pk, request.user.pk)
+    keyword_renewal(movie_pk)
 
     # 텍스트와 스코어를 분리
     texts, scores = get_texts_scores(fnames)
@@ -321,7 +336,7 @@ def create_review(request, movie_pk):
         if not top_keywords[i][0] in common_keywords:
             tmp.append(top_keywords[i][0])
     top_keywords = tmp
-    print('1',top_keywords )
+    # print('1',top_keywords )
 
     movies_keywords = Keyword.objects.all()
     
