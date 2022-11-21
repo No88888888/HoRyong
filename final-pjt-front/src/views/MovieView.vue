@@ -13,6 +13,9 @@
       </div>
       <div><input v-model="message"></div>
       <!-- /default -->
+      <div>
+        <star-rating v-model="score" increment="0.5" animate=true glow="10"></star-rating>
+      </div>
       <!-- footer 슬롯 콘텐츠 -->
       <template slot="footer">
         <button @click="doSend">제출</button>
@@ -23,13 +26,17 @@
 </template>
 
 <script>
+import StarRating from 'vue-star-rating'
 import MovieLists from '@/components/MovieLists'
 import ReviewModal from '@/components/ReviewModal'
+import router from '@/router'
+
 export default {
     name : 'MovieView',
     components: {
         MovieLists,
         ReviewModal,
+        StarRating,
     },
     data() {
       return {
@@ -37,6 +44,8 @@ export default {
         message: '',
         movie : null,
         imgUrl: '',
+        sendMessage: '',
+        score: 0,
       }
     },
     methods: {
@@ -50,15 +59,28 @@ export default {
       },
       closeModal() {
         this.modal = false
+        this.message = ''
+      },
+      getRecommendation() {
+      
       },
       doSend() {
         if (this.message.length > 0) {
           alert(this.message)
+          this.sendMessage = this.message
           this.message = ''
           this.closeModal()
         } else {
           alert('메시지를 입력해주세요.')
         }
+        const payload = {
+          pk: this.movie.id,
+          sentence: this.sendMessage,
+          score: this.score*2,
+        }
+        console.log(payload)
+        this.$store.dispatch('submitReview', payload)
+        router.push({ name: 'RecommendView' })
       },
       // computed: {
       //   imgUrl() {

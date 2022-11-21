@@ -15,6 +15,8 @@ export default new Vuex.Store({
   state: {
     movies: [],
     token: null,
+    recommendMovie: null,
+    username: null,
   },
   getters: {
     isLogin(state) {
@@ -28,7 +30,12 @@ export default new Vuex.Store({
     // 회원가입 && 로그인
     SAVE_TOKEN(state, token) {
       state.token = token
+      console.log(3, state.token)
       router.push({ name: 'MovieView' })
+    },
+    RECOMMEND_MOVIE(state, recommendation) {
+      state.recommendMovie = recommendation
+      console.log(2, state.recommendMovie)
     }
   },
   actions: {
@@ -62,6 +69,7 @@ export default new Vuex.Store({
         .then((res) => {
           // console.log(res)
           context.commit('SAVE_TOKEN', res.data.key)
+          context.state.username = payload.username
         })
     },
     login(context, payload) {
@@ -74,10 +82,25 @@ export default new Vuex.Store({
         }
       })
         .then((res) => {
-          // console.log(res)
+          console.log(res)
           context.commit('SAVE_TOKEN', res.data.key)
+          context.state.username = payload.username
         })
     },
+    submitReview(context, payload) {
+      axios({
+        method: 'post',
+        url: `${API_URL}/movies/${payload.pk}/create_review/`,
+        data: {
+          sentence: payload.sentence,
+          score: payload.score,
+        }
+      })
+        .then((res) =>{
+          console.log(res)
+          context.commit('RECOMMEND_MOVIE', res.data)
+        })
+    }
   },
   modules: {
   }

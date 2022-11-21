@@ -14,6 +14,7 @@
     "stylus-bundle": "^1.0.0",
     "vue": "^2.6.14",
     "vue-router": "^3.5.1",
+    "vue-star-rating": "^1.7.0",
     "vuex": "^3.6.2",
     "vuex-persistedstate": "^4.1.0"
   },

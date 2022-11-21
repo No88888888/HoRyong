@@ -7,6 +7,7 @@ import WishList from '@/components/WishList'
 import DetailView from '@/views/DetailView'
 import SignUpView from '@/views/SignUpView'
 import LoginView from '@/views/LoginView'
+import RecommendView from '@/views/RecommendView'
 Vue.use(VueRouter)
 
 const routes = [
@@ -46,6 +47,11 @@ const routes = [
     path: '/:id',
     name: 'DetailView',
     component: DetailView,
+  },
+  {
+    path: '/recommend',
+    name: 'RecommendView',
+    component: RecommendView,
   },
 ]
 

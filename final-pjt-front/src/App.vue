@@ -8,6 +8,7 @@
         <router-link :to="{ name: 'LoginView' }">Login Page</router-link>
       </nav>
       <router-view/>
+
     </div>
   </body>
 </template>

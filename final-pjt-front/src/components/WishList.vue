@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Wish List</h2>
+    <h1>Wish List</h1>
     <WishListItems/>
   </div>
 </template>
