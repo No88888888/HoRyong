@@ -105,7 +105,6 @@ def wish_list(request):
 # 내 영화 위시 리스트 넣고 빼고 지우는 함수
 # 1. 추천페이지에서 위시리스트 토글 클릭 시 위시 리스트에 넣고 뺌
 # 2. 내 프로필의 내 위시리스트 화면에서 삭제 시 위시 리스트레서 뺌
-@csrf_exempt
 @api_view(['POST', 'DELETE'])
 def modify_wishlist(request, movie_pk, user_pk):
     wishlist = WishList.objects.all()
@@ -141,7 +140,6 @@ def modify_wishlist(request, movie_pk, user_pk):
 
 # 내가 본영화 넣고 빼는 함수
 # 내가 본 영화 전체의 movie_id를 담아 프론트에게 전달
-@csrf_exempt
 @require_POST
 def watched_movie(request, movie_pk):
     if request.user.is_authenticated:
@@ -166,6 +164,7 @@ def watched_movie(request, movie_pk):
             my_watch_movie.append(added_watched_movie.movie_id)
         return JsonResponse(my_watch_movie, safe=False)
 
+# TODO: 필요한가?
 def recommend_page(request, movie_pk):
     
     pass
@@ -195,7 +194,8 @@ def get_from_list(l, i, default=('', 0)):
         return default
     else:
         return l[i]
-    
+
+# 리뷰 작성 시 새 리뷰 모함하여 해당 영화의 키워드를 리뉴얼하는 함수
 def keyword_renewal(movie_pk):
 
     beta = 0.85    # PageRank의 decaying factor beta
@@ -290,7 +290,6 @@ def keyword_renewal(movie_pk):
                     print('값이 바뀐 키워드', res[0])
     print('다돌았따!!!')
 
-@csrf_exempt
 @api_view(['POST'])
 def create_review(request, movie_pk):
 
