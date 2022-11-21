@@ -186,12 +186,12 @@ def get_texts_scores(fname):
     # with open(fname, encoding='utf-8') as f:
     docs = [doc.lower().replace('\n', '').split('&&') for doc in fname]
     docs = [doc for doc in docs if len(doc) == 2]
-    print('######',docs)
+    # print('######',docs)
     if not docs:
         return [], []
 
     texts, scores = zip(*docs)
-    print(texts, scores)
+    # print(texts, scores)
     return list(texts), list(scores)
     
 def get_from_list(l, i, default=('', 0)):
@@ -261,7 +261,7 @@ def create_review(request, movie_pk):
     # fnames = './data/A Werewolf Boy (1).txt'
     # 유저가 작성한 리뷰와 score를 && 기준으로 묶음
     fnames = [request.data['sentence'] + '&&' + str(request.data['score'])]
-    print(fnames)
+    # print(fnames)
     
     # 새로 작성된 리뷰를 DB에 저장
     # added_review = Reviews(
@@ -284,6 +284,18 @@ def create_review(request, movie_pk):
     top_keywords.append(sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:100])
     top_keywords = sum(top_keywords,[])
     
+    get_common_keywords = CommonKeyword.objects.all()
+    common_keywords = []
+    for ck in get_common_keywords:
+        common_keywords.append(ck.common_keyword)
+    print('1',top_keywords )
+    tmp = []
+    for i in range(len(top_keywords)):
+        if not top_keywords[i][0] in common_keywords:
+            tmp.append(top_keywords[i][0])
+    top_keywords = tmp
+    print('2',top_keywords )
+
     movies_keywords = Keyword.objects.all()
     
     reco_movies1 = [] # 내 키워드랑 매칭되는 영화들을 담을 리스트 1,2,3 순으로 내 키워드 탑3 관련
@@ -293,26 +305,34 @@ def create_review(request, movie_pk):
     if len(top_keywords) >= 3:
         for mRK in range(3):
             for keywords in movies_keywords:
-                if top_keywords[mRK][0] == keywords.keyword:
+                # print(keywords.keyword)
+                if top_keywords[mRK] == keywords.keyword:
                     if mRK == 0:
                         reco_movies1.append(keywords)
                     elif mRK == 1:
                         reco_movies2.append(keywords)
                     else:
                         reco_movies3.append(keywords)
+        print('1', reco_movies1)
+        print('1', reco_movies1[0].keyword)
+        print('2', reco_movies2)
+        print('2', reco_movies2[0].keyword)
+        print('3', reco_movies3)
+        print('3', reco_movies3[0].keyword)
         reco_movies1 = sorted(reco_movies1, key=lambda x:x.keyword_score, reverse=True)[:3]
         reco_movies2 = sorted(reco_movies2, key=lambda x:x.keyword_score, reverse=True)[:3]
         reco_movies3 = sorted(reco_movies3, key=lambda x:x.keyword_score, reverse=True)[:3]
-        reco_movies1 = random.sample(reco_movies1, 1).movie_id
-        reco_movies2 = random.sample(reco_movies2, 1).movie_id
-        reco_movies3 = random.sample(reco_movies3, 1).movie_id
+        reco_movies1 = random.sample(reco_movies1, 1)[0].movie_id
+        reco_movies2 = random.sample(reco_movies2, 1)[0].movie_id
+        reco_movies3 = random.sample(reco_movies3, 1)[0].movie_id
         reco_movies1 = Movies.objects.get(pk=reco_movies1)
         reco_movies2 = Movies.objects.get(pk=reco_movies2)
         reco_movies3 = Movies.objects.get(pk=reco_movies3)
         reco_movies.append(reco_movies1)
         reco_movies.append(reco_movies2)
         reco_movies.append(reco_movies3)
-        serializer = MoviesSerializer(reco_movies, may=True)
+        print('last', reco_movies)
+        serializer = MoviesSerializer(reco_movies, many=True)
         return Response(serializer.data)        
     else:
         return JsonResponse(reco_movies, safe=False)
