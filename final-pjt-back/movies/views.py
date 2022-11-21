@@ -260,7 +260,7 @@ def create_review(request, movie_pk):
     
     # fnames = './data/A Werewolf Boy (1).txt'
     # 유저가 작성한 리뷰와 score를 && 기준으로 묶음
-    fnames = [request.data['sentence'] + '&&' + request.data['score']]
+    fnames = [request.data['sentence'] + '&&' + str(request.data['score'])]
     print(fnames)
     
     # 새로 작성된 리뷰를 DB에 저장
