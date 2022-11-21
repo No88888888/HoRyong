@@ -303,9 +303,9 @@ def create_review(request, movie_pk):
         reco_movies1 = sorted(reco_movies1, key=lambda x:x.keyword_score, reverse=True)[:3]
         reco_movies2 = sorted(reco_movies2, key=lambda x:x.keyword_score, reverse=True)[:3]
         reco_movies3 = sorted(reco_movies3, key=lambda x:x.keyword_score, reverse=True)[:3]
-        reco_movies1 = random.sample(reco_movies1).movie_id
-        reco_movies2 = random.sample(reco_movies2).movie_id
-        reco_movies3 = random.sample(reco_movies3).movie_id
+        reco_movies1 = random.sample(reco_movies1, 1).movie_id
+        reco_movies2 = random.sample(reco_movies2, 1).movie_id
+        reco_movies3 = random.sample(reco_movies3, 1).movie_id
         reco_movies1 = Movies.objects.get(pk=reco_movies1)
         reco_movies2 = Movies.objects.get(pk=reco_movies2)
         reco_movies3 = Movies.objects.get(pk=reco_movies3)
