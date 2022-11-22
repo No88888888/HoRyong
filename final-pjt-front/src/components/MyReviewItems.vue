@@ -6,6 +6,7 @@
         <h5>{{ review.movie.title }}</h5>
       </div>
       <h3>{{ review.sentence }}</h3>
+      <button>수정</button>
     </div>
 
   </div>
@@ -23,6 +24,9 @@ export default {
       return imgurl
     }
   },
+  methods: {
+
+  }
 }
 </script>
 

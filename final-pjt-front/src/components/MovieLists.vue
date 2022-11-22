@@ -2,6 +2,7 @@
   <div class="movie-lists">
     <div>
       <h3>Movie List</h3>
+      <p>워치드 : {{ getWatchedMovie }}</p>
       <div class="wrap-vertical"> 
         <MovieListsItem
         class="movie-items"
@@ -12,6 +13,7 @@
         />
       </div>
     </div>
+
   </div>
 </template>
 
@@ -30,6 +32,10 @@ export default {
     computed:{
       movies() {
         return this.$store.state.movies
+      },
+      getWatchedMovie() {
+        console.log('스토어에 저장된 워치드',this.$store.state.watchedMovie)
+        return this.$store.state.watchedMovie
       }
     },
     created() {

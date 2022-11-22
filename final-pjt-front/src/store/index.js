@@ -17,6 +17,7 @@ export default new Vuex.Store({
     token: null,
     recommendMovie: null,
     username: null,
+    watchedMovie: null,
   },
   getters: {
     isLogin(state) {
@@ -46,16 +47,23 @@ export default new Vuex.Store({
       const temp = state.recommendMovie[0]
       state.recommendMovie[0] = state.recommendMovie[2]
       state.recommendMovie[2] = temp     
-    }
+    },
+    SAVE_WATCHED(state, data) {
+      state.watchedMovie = data
+    },
+    DELETE_ALL(state) {
+      state.movies = [],
+      state.token = null,
+      state.recommendMovie = null,
+      state.username = null,
+      state.watchedMovie = null
+    },
   },
   actions: {
     getMovies(context) {
       axios({
         method: 'get',
         url: `${API_URL}/movies/`,
-        headers: {
-          Authorization: `Token ${context.state.token}`
-        }
       })
         .then((res) => {
           // console.log(res, context)
@@ -100,14 +108,14 @@ export default new Vuex.Store({
       axios({
         method: 'post',
         url: `${API_URL}/accounts/logout/`,
-        data: {
-          username: null,
-          password: null,
-        },
+        headers: {
+          Authorization: `Token ${context.state.token}`
+        }
       })
         .then((res) => {
-          context.commit('SAVE_TOKEN', res.data.key)
-          context.state.username = null
+          console.log(res)
+          context.commit('DELETE_ALL')
+          router.go()
         })
     },
     submitReview(context, payload) {
@@ -133,6 +141,9 @@ export default new Vuex.Store({
     },
     switchWithThird(context) {
       context.commit('SWITCH_THIRD')
+    },
+    saveWatchedMovie(context, data) {
+      context.commit('SAVE_WATCHED', data)
     }
   },
   modules: {

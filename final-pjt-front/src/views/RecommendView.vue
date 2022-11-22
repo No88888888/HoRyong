@@ -18,10 +18,6 @@
       </div>
     </div>
 
-    <div>
-      <h1>저장 확인</h1>
-      <h2>{{ movie }}</h2>
-    </div>
   </div>
 </template>
 

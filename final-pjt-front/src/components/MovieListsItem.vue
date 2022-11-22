@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div
+    @click="watchedMovie"
+    >
     <div class="container">
       <img :src="posterImg" alt="" class="image">
       <div class="zoom">
@@ -15,37 +18,60 @@
     </div>
     <h5>{{ movie.title }}</h5>
   </div>
+  </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
-    name : 'MovieListsItem',
-    props: {
-        movie: Object,
-    },
-    data() {
-      return {
-        submitData : {
-          movie: this.movie,
-          modal: true,
-        }
-      }
-    },
-    computed: {
-      posterImg() {
-        const imgurl = 'https://image.tmdb.org/t/p/w220_and_h330_face/' + this.movie.poster_path 
-        return imgurl
-      }
-    },
-    methods: {
-      toMovieList() {
-        this.$emit('to-movie-list', this.submitData)
-      }
+  name : 'MovieListsItem',
+  props: {
+      movie: Object,
+  },
+  data() {
+    return {
+      submitData : {
+        movie: this.movie,
+        modal: true,
+      },
+      isActive: false
     }
+  },
+  computed: {
+    posterImg() {
+      const imgurl = 'https://image.tmdb.org/t/p/w220_and_h330_face/' + this.movie.poster_path 
+      return imgurl
+    },
+  },
+  methods: {
+    toMovieList() {
+      this.$emit('to-movie-list', this.submitData)
+    },
+    watchedMovie() {
+      const API_URL =`http://127.0.0.1:8000/movies/${this.movie.id}/watched_movie/`
+      axios({
+        method: 'post',
+        url: API_URL,
+        headers: {
+          Authorization: `Token ${this.$store.state.token}`
+        }
+      })
+      .then((res) =>{
+        console.log("와치드 무비", res.data)
+        this.$store.dispatch('saveWatchedMovie', res.data)
+      })
+    }
+  }
 }
+
 </script>
 
 <style>
+.isActive {
+  padding:4px;
+  background-color: orange;
+}
 .container {
   position: relative;
   width: 50%;

@@ -4,7 +4,7 @@
       <nav>
           <router-link :to="{ name: 'MovieView' }">Movies</router-link>
           <router-link :to="{ name: 'ProfileView' }" v-show="isLogedIn">Profiles</router-link>
-          <a href='#' v-show="isLogedIn" @click="logOut">Logout</a>
+          <a v-show="isLogedIn" @click.prevent="logOut">Logout</a>
           <router-link :to="{ name: 'SignUpView' }" v-show="!isLogedIn">Sign Up</router-link> 
           <router-link :to="{ name: 'LoginView' }" v-show="!isLogedIn">Login</router-link>
           <router-link :to="{ name: 'RecommendView' }">Recommend</router-link>
