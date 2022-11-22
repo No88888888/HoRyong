@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import requests
 import json
 from .models import Movies, WishList, CommonKeyword, Keyword
@@ -21,26 +21,9 @@ import random
 def movie_list(request):
     movies = get_list_or_404(Movies)
     if request.method == 'GET':
-        serializer = MoviesSerializer(movies)
+        serializer = MoviesSerializer(movies, many=True)
         return Response(serializer.data)
-    
-    # movies_list = []
-    # for movie in movies:
-    #     movies_list.append(
-    #         {
-    #             'id' : movie.pk,
-    #             'movie_id' : movie.movie_id,
-    #             'title' : movie.title,
-    #             'overview' : movie.overview,
-    #             'poster_path' : movie.poster_path,
-    #             'backdrop_path' : movie.backdrop_path,
-    #             'release_date' : movie.release_date,
-    #             'genres' : movie.genres,
-    #             'popularity' : movie.popularity,
-    #             'vote_average' : movie.vote_average,
-    #         }
-    #     )
-    # return JsonResponse(movies_list, safe=False)
+
 
 @api_view(['GET'])
 def movie_detail(request, movie_pk):
@@ -145,7 +128,7 @@ def modify_wishlist(request, movie_pk, user_pk):
 
 # 내가 본영화 넣고 빼는 함수
 # 내가 본 영화 전체의 movie_id를 담아 프론트에게 전달
-@require_POST
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def watched_movie(request, movie_pk):
     if request.user.is_authenticated:
@@ -170,6 +153,7 @@ def watched_movie(request, movie_pk):
             added_watched_movie.save()
             my_watch_movie.append(added_watched_movie.movie_id)
         return JsonResponse(my_watch_movie, safe=False)
+    return redirect('accounts:login')
 
 import sys
 sys.path.append('../')
@@ -284,7 +268,19 @@ def keyword_renewal(movie_pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_review(request, movie_pk):
-
+    # TODO: 내 워치드무비 불러옴
+    # 거기에 이 영화가 없으면 리턴
+    wms = []
+    watchedmovie = WatchedMovie.objects.all()
+    for wm in watchedmovie:
+        if wm.user_id == request.user.pk:
+            wms.append(wm.movie_id)
+    # if not movie_pk in wms:
+    #     message = {
+    #         'message' : '리뷰는 본 영화에만 작성 가능합니다'
+    #     }
+    #     return redirect('movies:movie_list')
+    # 아니라면 아래 로직
     # 유저가 작성한 리뷰에서 키워드를 추출
     beta = 0.85    # PageRank의 decaying factor beta
     max_iter = 10
@@ -334,7 +330,7 @@ def create_review(request, movie_pk):
         for mRK in range(len(top_keywords)):
             reco = []
             for keywords in movies_keywords:
-                if top_keywords[mRK] == keywords.keyword:
+                if top_keywords[mRK] == keywords.keyword and keywords.movie_id not in wms:
                     reco.append(keywords)
             if reco:
                 reco_movies.append(reco)
@@ -353,6 +349,7 @@ def create_review(request, movie_pk):
         reco_mov.append(reco_movies3)
         reco_mov = sum(reco_mov, [])
         serializer = KeywordsSerializer(reco_mov, many=True)
+        print(serializer.data)
         return Response(serializer.data)        
     else:
         return JsonResponse(reco_movies, safe=False)
