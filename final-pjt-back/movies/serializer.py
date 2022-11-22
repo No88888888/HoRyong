@@ -33,7 +33,7 @@ class ReviewsSerializer(serializers.ModelSerializer):
 
         class Meta:
             model = Movies
-            fields = ('movie_id', 'poster_path', 'title', 'overview', 'vote_average',)
+            fields = '__all__'
         
     class Meta:
         model = Reviews
