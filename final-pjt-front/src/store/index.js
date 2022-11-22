@@ -36,6 +36,16 @@ export default new Vuex.Store({
     RECOMMEND_MOVIE(state, recommendation) {
       state.recommendMovie = recommendation
       console.log(2, state.recommendMovie)
+    },
+    SWITCH_SECOND(state) {
+      const temp = state.recommendMovie[0]
+      state.recommendMovie[0] = state.recommendMovie[1]
+      state.recommendMovie[1] = temp
+    },
+    SWITCH_THIRD(state) {
+      const temp = state.recommendMovie[0]
+      state.recommendMovie[0] = state.recommendMovie[2]
+      state.recommendMovie[2] = temp     
     }
   },
   actions: {
@@ -117,6 +127,12 @@ export default new Vuex.Store({
           console.log("리뷰 제출 데이터", res.data)
           context.commit('RECOMMEND_MOVIE', res.data)
         })
+    },
+    switchWithSecond(context) {
+      context.commit('SWITCH_SECOND')
+    },
+    switchWithThird(context) {
+      context.commit('SWITCH_THIRD')
     }
   },
   modules: {

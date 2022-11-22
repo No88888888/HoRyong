@@ -11,10 +11,10 @@
         <h2>{{ username }} 님의 다른 키워드</h2>
       </div>
       <div>
-        <p>두번 째 키워드: <a href="">"{{ secondMovie.keyword }}" </a></p>
+        <span>두번 째 키워드: <div @click="changeToSecond">{{ secondMovie.keyword }}</div></span>
       </div>
       <div>
-        <p>세번 째 키워드: <a href="">"{{ thirdMovie.keyword }}" </a></p>
+        <span>세번 째 키워드: <div @click="changeToThird">{{ thirdMovie.keyword }}</div></span>
       </div>
     </div>
 
@@ -52,6 +52,18 @@ export default {
       return this.$store.state.recommendMovie[2]
     }
   },
+  methods: {
+    changeToSecond() {
+      this.$store.dispatch('switchWithSecond')
+      this.$router.push({ name: 'RecommendView'})
+      this.$router.go()
+    },
+    changeToThird() {
+      this.$store.dispatch('switchWithThird')
+      this.$router.push({ name: 'RecommendView'})
+      this.$router.go()
+    }
+  }
 }
 </script>
 
