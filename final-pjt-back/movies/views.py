@@ -17,26 +17,30 @@ from .serializer import ReviewsSerializer, WishListSerializer, MoviesSerializer,
 from django.views.decorators.csrf import csrf_exempt
 import random
 
-
+@api_view(['GET'])
 def movie_list(request):
-    movies = Movies.objects.all()
-    movies_list = []
-    for movie in movies:
-        movies_list.append(
-            {
-                'id' : movie.pk,
-                'movie_id' : movie.movie_id,
-                'title' : movie.title,
-                'overview' : movie.overview,
-                'poster_path' : movie.poster_path,
-                'backdrop_path' : movie.backdrop_path,
-                'release_date' : movie.release_date,
-                'genres' : movie.genres,
-                'popularity' : movie.popularity,
-                'vote_average' : movie.vote_average,
-            }
-        )
-    return JsonResponse(movies_list, safe=False)
+    movies = get_list_or_404(Movies)
+    if request.method == 'GET':
+        serializer = MoviesSerializer(movies)
+        return Response(serializer.data)
+    
+    # movies_list = []
+    # for movie in movies:
+    #     movies_list.append(
+    #         {
+    #             'id' : movie.pk,
+    #             'movie_id' : movie.movie_id,
+    #             'title' : movie.title,
+    #             'overview' : movie.overview,
+    #             'poster_path' : movie.poster_path,
+    #             'backdrop_path' : movie.backdrop_path,
+    #             'release_date' : movie.release_date,
+    #             'genres' : movie.genres,
+    #             'popularity' : movie.popularity,
+    #             'vote_average' : movie.vote_average,
+    #         }
+    #     )
+    # return JsonResponse(movies_list, safe=False)
 
 @api_view(['GET'])
 def movie_detail(request, movie_pk):
@@ -47,6 +51,7 @@ def movie_detail(request, movie_pk):
     
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def my_review(request, user_pk):
     review_data = get_list_or_404(Reviews)
     serializers = []
@@ -54,7 +59,6 @@ def my_review(request, user_pk):
         for review in review_data:
             if review.user_id == user_pk:
                 serializer = ReviewsSerializer(review)
-                # print(serializer.data)
                 serializers.append(serializer.data)
     return JsonResponse(serializers, safe=False)
         
@@ -63,6 +67,7 @@ def my_review(request, user_pk):
 # 1. 내 프로필의 내 리뷰 페이지에서 리뷰 수정 시 해당 리뷰 수정한 data 수정 후 반환
 # 2. 내 프로필의 내 리뷰 페이지에서 리뷰 삭제 시 해당 리뷰 삭제 후 나머지 내 리뷰 반환
 @api_view(['PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def modify_myreview(request, user_pk, movie_pk):
     review_data = get_list_or_404(Reviews)
     my_review = []
@@ -88,6 +93,7 @@ def modify_myreview(request, user_pk, movie_pk):
 # 내 위시리스트 전체 보내주는 함수
 # 위시 리스트가 없을 수 있으므로 없으면 빈 리스트 반환
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def wish_list(request):
     wishlist_data = WishList.objects.all()
     serializers = []
@@ -95,7 +101,6 @@ def wish_list(request):
         for wishlist in wishlist_data:
             if wishlist.user_id == request.user.pk:
                 serializer = WishListSerializer(wishlist)
-                # print(serializer.data)
                 serializers.append(serializer.data)
         else:        
             return JsonResponse(wishlist_data, safe=False)
@@ -106,13 +111,14 @@ def wish_list(request):
 # 1. 추천페이지에서 위시리스트 토글 클릭 시 위시 리스트에 넣고 뺌
 # 2. 내 프로필의 내 위시리스트 화면에서 삭제 시 위시 리스트레서 뺌
 @api_view(['POST', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def modify_wishlist(request, movie_pk, user_pk):
     wishlist = WishList.objects.all()
     my_wish_movie = []
     for i in wishlist:
         if i.user_id == user_pk:
             my_wish_movie.append(i)
-    # print(my_wish_movie)
+            
     if request.method == 'POST':
         for i in wishlist:
             if i.movie_id == movie_pk and i.user_id == user_pk:
@@ -128,11 +134,10 @@ def modify_wishlist(request, movie_pk, user_pk):
             )
             added_wish_movie.save()
             my_wish_movie.append(added_wish_movie)
-            print('1',my_wish_movie)
+            
     elif request.method == 'DELETE':
         wishmovie = WishList.objects.get(movie_id=movie_pk, user_id=user_pk)
         my_wish_movie.pop(my_wish_movie.index(wishmovie))
-        # print('2', my_wish_movie)
         wishmovie.delete()
     serializer = WishListSerializer(my_wish_movie, many=True)
     return Response(serializer.data)
@@ -141,6 +146,7 @@ def modify_wishlist(request, movie_pk, user_pk):
 # 내가 본영화 넣고 빼는 함수
 # 내가 본 영화 전체의 movie_id를 담아 프론트에게 전달
 @require_POST
+@permission_classes([IsAuthenticated])
 def watched_movie(request, movie_pk):
     if request.user.is_authenticated:
         watchedmovie = WatchedMovie.objects.all()
@@ -148,6 +154,7 @@ def watched_movie(request, movie_pk):
         for i in watchedmovie:
             if i.user_id == request.user.pk:
                 my_watch_movie.append(i.movie_id)
+                
         for i in watchedmovie:
             if i.movie_id == movie_pk and i.user_id == request.user.pk:
                 delete_id= i.id
@@ -163,11 +170,6 @@ def watched_movie(request, movie_pk):
             added_watched_movie.save()
             my_watch_movie.append(added_watched_movie.movie_id)
         return JsonResponse(my_watch_movie, safe=False)
-
-# TODO: 필요한가?
-def recommend_page(request, movie_pk):
-    
-    pass
 
 import sys
 sys.path.append('../')
@@ -222,7 +224,6 @@ def keyword_renewal(movie_pk):
     top_keywords.append(sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:100])
     top_keywords = sum(top_keywords,[])
     
-    print('여기', len(top_keywords))
 
     # 모든 영화들에서 키워드의 숫자를 셈
     # keyword_counter = {}
@@ -240,14 +241,6 @@ def keyword_renewal(movie_pk):
 
     # # common_keywords를 제외한 진짜 키워드만을 추출하여 selected_top_keywords에 영화별로 담음
     selected_top_keywords = []
-    # for keywords in top_keywords:
-    #     selected_keywords = []
-    #     for word, r in keywords:
-    #         if word in common_keywords:
-    #             continue
-    #         selected_keywords.append((word, r))
-    #     selected_top_keywords.append(selected_keywords)
-        
     for keywords in top_keywords:
         keywords = [keywords]
         # selected_keywords = []
@@ -256,14 +249,12 @@ def keyword_renewal(movie_pk):
                 continue
             # selected_keywords.append((word, r))
             selected_top_keywords.append((word, r))
-    print(len(selected_top_keywords))
     
     keywords = Keyword.objects.all()
     keyword_list = []
     only_keyword_list = []
     for i in keywords:
         if i.movie_id == movie_pk:
-            print('무비아이디',i.movie_id)
             keyword_list.append(i)
             only_keyword_list.append(i.keyword)
     for k in range(len(selected_top_keywords)):
@@ -291,6 +282,7 @@ def keyword_renewal(movie_pk):
     print('다돌았따!!!')
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_review(request, movie_pk):
 
     # 유저가 작성한 리뷰에서 키워드를 추출
@@ -302,7 +294,6 @@ def create_review(request, movie_pk):
     # fnames = './data/A Werewolf Boy (1).txt'
     # 유저가 작성한 리뷰와 score를 && 기준으로 묶음
     fnames = [request.data['sentence'] + '&&' + str(request.data['score'])]
-    # print(fnames)
     # 새로 작성된 리뷰를 DB에 저장
     added_review = Reviews(
         sentence = request.data['sentence'],
@@ -335,7 +326,6 @@ def create_review(request, movie_pk):
         if not top_keywords[i][0] in common_keywords:
             tmp.append(top_keywords[i][0])
     top_keywords = tmp
-    # print('1',top_keywords )
 
     movies_keywords = Keyword.objects.all()
     
@@ -344,14 +334,12 @@ def create_review(request, movie_pk):
         for mRK in range(len(top_keywords)):
             reco = []
             for keywords in movies_keywords:
-                # print(keywords.keyword)
                 if top_keywords[mRK] == keywords.keyword:
                     reco.append(keywords)
             if reco:
                 reco_movies.append(reco)
             if len(reco_movies) == 3:
                 break
-        # print(len(set(reco_movies)))
         reco_movies1 = sorted(reco_movies[0], key=lambda x:x.keyword_score, reverse=True)[:3]
         reco_movies2 = sorted(reco_movies[1], key=lambda x:x.keyword_score, reverse=True)[:3]
         reco_movies3 = sorted(reco_movies[2], key=lambda x:x.keyword_score, reverse=True)[:3]
@@ -369,57 +357,3 @@ def create_review(request, movie_pk):
     else:
         return JsonResponse(reco_movies, safe=False)
     
-        
-        
-        
-        
-        
-        
-# TODO: 위시리스트 어덯게 해야하지
-# @require_POST
-# def follow(request, movie_pk):
-#     if request.user.is_authenticated:
-#         User = get_user_model()
-#         me = request.user
-#         you = User.objects.get(pk=user_pk)
-#         if me != you:
-#             # 내가 (request.user) 그 사람의 팔로워 목록에 있다면
-#             # if me in you.followers.all():
-#             if you.followers.filter(pk=me.pk).exists():
-#                 #언팔로우
-#                 you.followers.remove(me)
-#             else:
-#                 # 팔로우
-#                 you.followers.add(me)
-#         return redirect('accounts:profile', you.username)
-#     return redirect('accounts:login')
-
-
-
-
-
-# @api_view(['GET', 'DELETE', 'PUT'])
-# def article_detail(request, article_pk):
-#     # article = Article.objects.get(pk=article_pk)
-#     article = get_object_or_404(Article, pk=article_pk)
-
-#     if request.method == 'GET':
-#         serializer = ArticleSerializer(article)
-#         print(serializer.data)
-#         return Response(serializer.data)
-
-# @api_view(['GET'])
-# def wish_list(request, user_pk):
-#     wishlist_data = get_list_or_404(WishList)
-#     serializers = []
-#     for i in wishlist_data:
-#         if i.user_id == user_pk:
-#             wishlist = i
-#             if request.method == 'GET':
-#                 serializer = WishListSerializer(wishlist)
-#                 # print(serializer.data)
-#                 serializers.append(serializer.data)
-#             # if request.method == 'DELETE':
-#             #     # .remove('해당무비')
-#             #     pass
-#     return JsonResponse(serializers, safe=False)
