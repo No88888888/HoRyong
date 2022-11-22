@@ -58,7 +58,6 @@ export default {
         }
       })
       .then((res) =>{
-        console.log("와치드 무비", res.data)
         this.$store.dispatch('saveWatchedMovie', res.data)
       })
     }
