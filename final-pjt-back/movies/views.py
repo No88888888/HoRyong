@@ -76,8 +76,7 @@ def modify_myreview(request, user_pk, movie_pk):
 # 내 위시리스트 전체 보내주는 함수
 # 위시 리스트가 없을 수 있으므로 없으면 빈 리스트 반환
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def wish_list(request):
+def wish_list(request, user_pk):
     wishlist_data = WishList.objects.all()
     serializers = []
     if request.method == 'GET':
@@ -86,7 +85,7 @@ def wish_list(request):
                 serializer = WishListSerializer(wishlist)
                 serializers.append(serializer.data)
         else:        
-            return JsonResponse(wishlist_data, safe=False)
+            return JsonResponse(serializers, safe=False)
     return JsonResponse(serializers, safe=False)
 
 
