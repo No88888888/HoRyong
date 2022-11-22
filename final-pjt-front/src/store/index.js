@@ -39,6 +39,9 @@ export default new Vuex.Store({
       state.recommendMovie = recommendation
       console.log(2, state.recommendMovie)
     },
+    WISHLIST_MOVIE(state, mywishlist) {
+      state.wishlist = mywishlist
+    },
     SWITCH_SECOND(state) {
       const temp = state.recommendMovie[0]
       state.recommendMovie[0] = state.recommendMovie[1]
@@ -51,9 +54,6 @@ export default new Vuex.Store({
     },
     SAVE_WATCHED(state, data) {
       state.watchedMovie = data
-    },
-    SAVE_WISHLIST(state, data) {
-      state.wishlist = data
     },
     DELETE_ALL(state) {
       state.movies = [],
@@ -140,6 +140,22 @@ export default new Vuex.Store({
           context.commit('RECOMMEND_MOVIE', res.data)
         })
     },
+    submitWishList(context, payload) {
+      axios({
+        method: 'post',
+        url: `${API_URL}/movies/wish_list/${payload.pk}/`,
+        data: {
+          movie_pk: payload.movie_id,
+        },
+        headers: {
+          Authorization: `Token ${context.state.token}`
+        }
+      })
+        .then((res) =>{
+          console.log("위시리스트 제출 데이터", res.data)
+          context.commit('WISHLIST_MOVIE', res.data) 
+      })
+    },
     switchWithSecond(context) {
       context.commit('SWITCH_SECOND')
     },
@@ -149,9 +165,6 @@ export default new Vuex.Store({
     saveWatchedMovie(context, data) {
       context.commit('SAVE_WATCHED', data)
     },
-    saveWishList(context, data) {
-      context.commit('SAVE_WISHLIST', data)
-    }
   },
   modules: {
   }
