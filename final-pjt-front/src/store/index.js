@@ -143,7 +143,7 @@ export default new Vuex.Store({
     submitWishList(context, payload) {
       axios({
         method: 'post',
-        url: `${API_URL}/movies/wish_list/${payload.pk}/`,
+        url: `${API_URL}/movies/${payload.movie_id}/modify_wishlist/${payload.pk}/`,
         data: {
           movie_pk: payload.movie_id,
         },

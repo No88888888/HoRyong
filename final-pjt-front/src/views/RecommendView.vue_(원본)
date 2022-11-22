@@ -9,13 +9,10 @@
       <img :src="firstMovieImg" alt="" />
     <div>
         <p> WishList </p>
-        <!-- <button style="border:none; background-color:white;" @click="doSend">
+        <button style="border:none; background-color:white;" @click="doSend">
           추가 
-        </button> -->
-        <!-- <div @click="wishlist_toggle">
-          <i class="bi bi-heart" v-if="!is_like_journal"></i>
-          <i class="bi bi-heart-fill" v-if="is_like_journal"></i>
-        </div> -->
+        </button>
+        
       <h2>{{ username }} 님의 다른 키워드</h2>
     </div>
       <div>
@@ -96,16 +93,6 @@ export default {
       this.$router.push({ name: "RecommendView" });
       this.$router.go();
     },
-    // wishlist_toggle() {
-    //   axios({
-    //     method: 'get',
-    //     url: `${API_URL}/${this.movie.movie.id}`,
-    //     headers: {
-    //       Authorization: `Token ${ this.$store.state.token }`
-    //     }
-
-    //   })
-    // }
     // wishList() {
     //   axios({
     //     method: 'post',

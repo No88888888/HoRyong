@@ -7,6 +7,7 @@
     :key="wishlist.id"
     :wishlist="wishlist"
     />
+    <h3>{{wishListMovie}}</h3>
   </div>
 </template>
 
@@ -28,6 +29,12 @@ export default {
       username: null,
     }
   },
+  
+  computed: {
+    wishListMovie() {
+    return this.$store.state.wishlist
+    }
+  },
   created() {
     this.getUserPk()
   },
@@ -47,6 +54,7 @@ export default {
       })
         .then((res) => {
           const user_id = res.user_id
+          console.log('여기',user_id)
           axios({
             methods: 'get',
             url: `${API_URL}/movies/wish_list/${user_id}/`,
@@ -58,6 +66,7 @@ export default {
             }
           })
           .then((res) => {
+            console.log('여기',res)
             this.wishlists = res.data
             console.log(this.wishlists)
           })

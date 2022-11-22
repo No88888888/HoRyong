@@ -92,43 +92,65 @@ def wish_list(request, user_pk):
 # 내 영화 위시 리스트 넣고 빼고 지우는 함수
 # 1. 추천페이지에서 위시리스트 토글 클릭 시 위시 리스트에 넣고 뺌
 # 2. 내 프로필의 내 위시리스트 화면에서 삭제 시 위시 리스트레서 뺌
-@api_view(['POST', 'DELETE'])
-@permission_classes([IsAuthenticated])
-def modify_wishlist(request, movie_pk, user_pk):
-    wishlist = WishList.objects.all()
-    my_wish_movie = []
-    for i in wishlist:
-        if i.user_id == user_pk:
-            my_wish_movie.append(i)
+# @api_view(['POST', 'DELETE'])
+# # @permission_classes([IsAuthenticated])
+# def modify_wishlist(request, movie_pk, user_pk):
+#     wishlist = WishList.objects.all()
+#     my_wish_movie = []
+#     for i in wishlist:
+#         if i.user_id == user_pk:
+#             my_wish_movie.append(i)
             
+#     if request.method == 'POST':
+#         for i in wishlist:
+#             if i.movie_id == movie_pk and i.user_id == user_pk:
+#                 delete_id= i.id
+#                 wishmovie = get_object_or_404(WishList, pk=delete_id)
+#                 my_wish_movie.pop(my_wish_movie.index(wishmovie))
+#                 wishmovie.delete()
+#                 break
+#         else:
+#             added_wish_movie = WishList(
+#                 user_id = user_pk,
+#                 movie_id = movie_pk
+#             )
+#             added_wish_movie.save()
+#             my_wish_movie.append(added_wish_movie)
+            
+#     elif request.method == 'DELETE':
+#         wishmovie = WishList.objects.get(movie_id=movie_pk, user_id=user_pk)
+#         my_wish_movie.pop(my_wish_movie.index(wishmovie))
+#         wishmovie.delete()
+#     serializer = WishListSerializer(my_wish_movie, many=True)
+#     return Response(serializer.data)
+
+@api_view(['POST', 'DELETE'])
+# @permission_classes([IsAuthenticated])
+def modify_wishlist(request, movie_pk, user_pk):
+    wishlist = WishList.objects.get(user_id=user_pk, movie_id=movie_pk)
     if request.method == 'POST':
-        for i in wishlist:
-            if i.movie_id == movie_pk and i.user_id == user_pk:
-                delete_id= i.id
-                wishmovie = get_object_or_404(WishList, pk=delete_id)
-                my_wish_movie.pop(my_wish_movie.index(wishmovie))
-                wishmovie.delete()
-                break
+        if wishlist:
+            wishlist.delete()
+            is_wish = False
         else:
             added_wish_movie = WishList(
                 user_id = user_pk,
                 movie_id = movie_pk
             )
             added_wish_movie.save()
-            my_wish_movie.append(added_wish_movie)
-            
-    elif request.method == 'DELETE':
-        wishmovie = WishList.objects.get(movie_id=movie_pk, user_id=user_pk)
-        my_wish_movie.pop(my_wish_movie.index(wishmovie))
-        wishmovie.delete()
-    serializer = WishListSerializer(my_wish_movie, many=True)
-    return Response(serializer.data)
-
-
+            is_wish =True
+        context = {
+            'is_wish' : is_wish
+        }
+        return JsonResponse(context, safe=False)
+    if request.method == 'DELETE':
+        wishlist.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
 # 내가 본영화 넣고 빼는 함수
 # 내가 본 영화 전체의 movie_id를 담아 프론트에게 전달
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def watched_movie(request, movie_pk):
     if request.user.is_authenticated:
         watchedmovie = WatchedMovie.objects.all()
