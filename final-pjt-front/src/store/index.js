@@ -18,6 +18,7 @@ export default new Vuex.Store({
     recommendMovie: null,
     username: null,
     watchedMovie: null,
+    wishlist: null,
   },
   getters: {
     isLogin(state) {
@@ -50,6 +51,9 @@ export default new Vuex.Store({
     },
     SAVE_WATCHED(state, data) {
       state.watchedMovie = data
+    },
+    SAVE_WISHLIST(state, data) {
+      state.wishlist = data
     },
     DELETE_ALL(state) {
       state.movies = [],
@@ -144,6 +148,9 @@ export default new Vuex.Store({
     },
     saveWatchedMovie(context, data) {
       context.commit('SAVE_WATCHED', data)
+    },
+    saveWishList(context, data) {
+      context.commit('SAVE_WISHLIST', data)
     }
   },
   modules: {
