@@ -16,6 +16,7 @@ from .models import Movies, Reviews, WatchedMovie, WishList
 from .serializer import ReviewsSerializer, WishListSerializer, MoviesSerializer, KeywordsSerializer
 from django.views.decorators.csrf import csrf_exempt
 import random
+from django.db.models import Q
 
 @api_view(['GET'])
 def movie_list(request):
@@ -127,22 +128,22 @@ def wish_list(request, user_pk):
 @api_view(['POST', 'DELETE'])
 # @permission_classes([IsAuthenticated])
 def modify_wishlist(request, movie_pk, user_pk):
-    wishlist = WishList.objects.get(user_id=user_pk, movie_id=movie_pk)
+    # wishlist = WishList.objects.get(user_id=user_pk, movie_id=movie_pk)
+    wishlist = WishList.objects.filter(user_id=user_pk, movie_id=movie_pk)
     if request.method == 'POST':
         if wishlist:
             wishlist.delete()
-            is_wish = False
         else:
             added_wish_movie = WishList(
                 user_id = user_pk,
                 movie_id = movie_pk
             )
             added_wish_movie.save()
-            is_wish =True
-        context = {
-            'is_wish' : is_wish
-        }
-        return JsonResponse(context, safe=False)
+            print('여기와요?')
+        wishlists = WishList.objects.all()
+        print(wishlists)
+        serializer = WishListSerializer(wishlists, many=True)
+        return Response(serializer.data)
     if request.method == 'DELETE':
         wishlist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

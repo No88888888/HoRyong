@@ -29,7 +29,7 @@
 import StarRating from 'vue-star-rating'
 import MovieLists from '@/components/MovieLists'
 import ReviewModal from '@/components/ReviewModal'
-import router from '@/router'
+// import router from '@/router'
 
 export default {
     name : 'MovieView',
@@ -80,7 +80,7 @@ export default {
         }
         console.log("제출할 때 넘겨 주는 데이터", payload)
         this.$store.dispatch('submitReview', payload)
-        router.push({ name: 'RecommendView' })
+        // router.push({ name: 'RecommendView' })
       },
       // computed: {
       //   imgUrl() {

@@ -139,23 +139,27 @@ export default new Vuex.Store({
           console.log("리뷰 제출 데이터", res.data)
           context.commit('RECOMMEND_MOVIE', res.data)
         })
+        .then((res) => {
+          console.log(res)
+          router.push({ name: 'RecommendView' })
+        })
     },
-    submitWishList(context, payload) {
-      axios({
-        method: 'post',
-        url: `${API_URL}/movies/${payload.movie_id}/modify_wishlist/${payload.pk}/`,
-        data: {
-          movie_pk: payload.movie_id,
-        },
-        headers: {
-          Authorization: `Token ${context.state.token}`
-        }
-      })
-        .then((res) =>{
-          console.log("위시리스트 제출 데이터", res.data)
-          context.commit('WISHLIST_MOVIE', res.data) 
-      })
-    },
+    // submitWishList(context, payload) {
+    //   axios({
+    //     method: 'post',
+    //     url: `${API_URL}/movies/${payload.movie_id}/modify_wishlist/${payload.pk}/`,
+    //     data: {
+    //       movie_pk: payload.movie_id,
+    //     },
+    //     headers: {
+    //       Authorization: `Token ${context.state.token}`
+    //     }
+    //   })
+    //     .then((res) =>{
+    //       console.log("위시리스트 제출 데이터", res.data)
+    //       context.commit('WISHLIST_MOVIE', res.data) 
+    //   })
+    // },
     switchWithSecond(context) {
       context.commit('SWITCH_SECOND')
     },
@@ -165,6 +169,9 @@ export default new Vuex.Store({
     saveWatchedMovie(context, data) {
       context.commit('SAVE_WATCHED', data)
     },
+    insertWishList(context, data) {
+      context.commit('WISHLIST_MOVIE', data)
+    }
   },
   modules: {
   }

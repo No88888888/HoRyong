@@ -1,5 +1,6 @@
 <template>
   <body>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <div id="app">
       <nav>
           <router-link :to="{ name: 'MovieView' }">Movies</router-link>
@@ -31,6 +32,7 @@ export default {
 </script>
 
 <style>
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css");
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

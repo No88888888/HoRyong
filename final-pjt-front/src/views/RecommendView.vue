@@ -8,16 +8,12 @@
       <h3>"{{ firstMovie.movie.title }}" 입니다.</h3>
       <img :src="firstMovieImg" alt="" />
     <div>
-        <p> WishList </p>
-        <!-- <button style="border:none; background-color:white;" @click="doSend">
-          추가 
-        </button> -->
-        <!-- <div @click="wishlist_toggle">
-          <i class="bi bi-heart" v-if="!is_like_journal"></i>
-          <i class="bi bi-heart-fill" v-if="is_like_journal"></i>
-        </div> -->
-      <h2>{{ username }} 님의 다른 키워드</h2>
+        <div @click="wishListToggle">
+          <i class="bi bi-bookmark-star" v-if="!is_wish_movie"></i>
+          <i class="bi bi-bookmark-star-fill" v-if="is_wish_movie"></i>
+        </div>
     </div>
+      <h2>{{ username }} 님의 다른 키워드</h2>
       <div>
         <span>
           두번 째 키워드:
@@ -45,15 +41,24 @@ export default {
     return {
       movie: this.$store.state.recommendMovie,
       user_id : null,
+      is_wishlist : null,
     };
   },
   
   computed: {
+    is_wish_movie() {
+      const wishlists = this.$store.state.wishlist.data
+      for (let wish of wishlists) {
+        if (wish.movie.id === this.firstMovie.movie.id && wish.user === this.user_id) {
+          return true
+        } 
+      }
+      return false
+    },
     firstMovie() {
       return this.$store.state.recommendMovie[0];
     },
     username() {
-      console.log(this.$store.state.username);
       return this.$store.state.username;
     },
     firstMovieImg() {
@@ -96,31 +101,20 @@ export default {
       this.$router.push({ name: "RecommendView" });
       this.$router.go();
     },
-    // wishlist_toggle() {
-    //   axios({
-    //     method: 'get',
-    //     url: `${API_URL}/${this.movie.movie.id}`,
-    //     headers: {
-    //       Authorization: `Token ${ this.$store.state.token }`
-    //     }
-
-    //   })
-    // }
-    // wishList() {
-    //   axios({
-    //     method: 'post',
-    //     url: `${API_URL}/${this.movie.id}/movies/${this.user_id}/`,
-    //     headers: {
-    //       Authorization: `Token ${this.$store.state.token}`
-    //     }
-    //   })
-    //   .then((res) => {
-    //     // res = 내 위시 리스트 전체
-    //     // 여기 컴포넌트에 있는 영화 아이디 this.movie.id가 res에 있는지 확인
-        
-    //   })
-    //   .catch((err) => console.log(err))
-    // },
+    wishListToggle() {
+      axios({
+        method: 'post',
+        url: `${API_URL}/movies/${this.firstMovie.movie.id}/modify_wishlist/${this.user_id}/`,
+        headers: {
+          Authorization: `Token ${this.$store.state.token}`
+        }
+      })
+        .then((res) => {
+          console.log(res)
+          this.$store.dispatch('insertWishList', res)
+        })
+      
+    }
   }
 };
 </script>
