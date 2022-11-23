@@ -7,7 +7,6 @@
     :key="wishlist.id"
     :wishlist="wishlist"
     />
-    <h3>{{wishMovie}}</h3>
   </div>
 </template>
 
@@ -32,13 +31,11 @@ export default {
   
   computed: {
     wishMovie() {
-      // console.log(this.user_id)
       return this.wishlists
     }
   },
   created() {
-    this.getUserPk(),
-    this.wishListMovie()
+    this.getUserPk()
   },
   methods: {
     getUserPk() {
@@ -52,36 +49,34 @@ export default {
         .then((res) => {
             this.user_id = res.data.pk
             this.username = res.data.username
+            this.wishListMovie()
             return {'user_id': res.data.pk}
       })
-        .then((res) => {
-          const user_id = res.user_id
-          axios({
-            methods: 'get',
-            url: `${API_URL}/movies/wish_list/${user_id}/`,
-            data: {
-              user_pk: user_id,
-            },
-            header: {
-              Authorization: `Token ${ this.$store.state.token }`
-            }
-          })
-          .then((res) => {
-            this.wishlists = res.data
-          })
-      })
+      //   .then((res) => {
+      //     const user_id = res.user_id
+      //     axios({
+      //       methods: 'get',
+      //       url: `${API_URL}/movies/wish_list/${user_id}/`,
+      //       data: {
+      //         user_pk: user_id,
+      //       },
+      //       header: {
+      //         Authorization: `Token ${ this.$store.state.token }`
+      //       }
+      //     })
+      //     .then((res) => {
+      //       console.log(res)
+      //       // this.wishlists = res.data
+      //     })
+      // })
     },
     wishListMovie() {
-      const mywishlist = this.$store.state.wishlist
-      console.log('왜',mywishlist)
-      // console.log(this.user_id)
+      const mywishlist = this.$store.state.wishlist.data
       for (let wish of mywishlist) {
-        // console.log(wish.user)
         if (wish.user === this.user_id) {
           this.wishlists.push(wish)
         } 
       }
-      // console.log(this.wishlists)
       return this.wishlists
     }
   }

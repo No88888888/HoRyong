@@ -13,7 +13,7 @@ from rest_framework.decorators import permission_classes
 from django.views.decorators.http import require_http_methods, require_POST, require_safe
 from rest_framework.permissions import IsAuthenticated
 from .models import Movies, Reviews, WatchedMovie, WishList
-from .serializer import ReviewsSerializer, WishListSerializer, MoviesSerializer, KeywordsSerializer, WatchedMovieSerializer
+from .serializer import ReviewsSerializer, WishListSerializer, MoviesSerializer, KeywordsSerializer
 from django.views.decorators.csrf import csrf_exempt
 import random
 from django.db.models import Q
@@ -146,67 +146,43 @@ def modify_wishlist(request, movie_pk, user_pk):
         wishlist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# 내가 본영화 넣고 빼는 함수
-# 내가 본 영화 전체의 movie_id를 담아 프론트에게 전달
-# @api_view(['POST'])
-# # @permission_classes([IsAuthenticated])
-# def watched_movie(request, movie_pk):
-#     if request.user.is_authenticated:
-#         watchedmovie = WatchedMovie.objects.all()
-#         my_watch_movie = []
-#         for i in watchedmovie:
-#             if i.user_id == request.user.pk:
-#                 my_watch_movie.append(i.movie_id)
-                
-#         for i in watchedmovie:
-#             if i.movie_id == movie_pk and i.user_id == request.user.pk:
-#                 delete_id= i.id
-#                 watchmovie = get_object_or_404(WatchedMovie, pk=delete_id)
-#                 watchmovie.delete()
-#                 my_watch_movie.remove(movie_pk)
-#                 break
-#         else:
-#             added_watched_movie = WatchedMovie(
-#                 user_id = request.user.pk,
-#                 movie_id = movie_pk
-#             )
-#             added_watched_movie.save()
-#             my_watch_movie.append(added_watched_movie.movie_id)
-#         return JsonResponse(my_watch_movie, safe=False)
-#     return redirect('accounts:login')
-
-@api_view(['GET', 'POST'])
-# @permission_classes([IsAuthenticated])
-def watched_movie(request, movie_pk):
+@api_view(['GET'])
+def get_watched_movie(request):
     if request.user.is_authenticated:
         watchedmovie_data = WatchedMovie.objects.all()
         my_watch_movie = []
-        # for i in watchedmovie:
-        #     if i.user_id == request.user.pk:
-        #         my_watch_movie.append(i.movie_id)
-        if request.method == 'GET':
-            for watchedmovie in watchedmovie_data:
-                if watchedmovie.user_id == request.user.pk:
-                    my_watch_movie.append(watchedmovie)
-            serializer = WatchedMovieSerializer(my_watch_movie, many=True)
-            return Response(serializer.data)        
-        
-        if request.method == 'POST':        
-            for watchedmovie in watchedmovie_data:
-                if watchedmovie.movie_id == movie_pk and watchedmovie.user_id == request.user.pk:
-                    delete_id= watchedmovie.id
-                    watchmovie = get_object_or_404(WatchedMovie, pk=delete_id)
-                    watchmovie.delete()
-                    my_watch_movie.remove(movie_pk)
-                    break
-            else:
-                added_watched_movie = WatchedMovie(
-                    user_id = request.user.pk,
-                    movie_id = movie_pk
-                )
-                added_watched_movie.save()
-                my_watch_movie.append(added_watched_movie.movie_id)
-            return JsonResponse(my_watch_movie, safe=False)
+        for watchedmovie in watchedmovie_data:
+            if watchedmovie.user_id == request.user.pk:
+                my_watch_movie.append(watchedmovie.movie_id)
+        return JsonResponse(my_watch_movie, safe=False)
+                
+# 내가 본영화 넣고 빼는 함수
+# 내가 본 영화 전체의 movie_id를 담아 프론트에게 전달
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def watched_movie(request, movie_pk):
+    if request.user.is_authenticated:
+        watchedmovie = WatchedMovie.objects.all()
+        my_watch_movie = []
+        for i in watchedmovie:
+            if i.user_id == request.user.pk:
+                my_watch_movie.append(i.movie_id)
+                
+        for i in watchedmovie:
+            if i.movie_id == movie_pk and i.user_id == request.user.pk:
+                delete_id= i.id
+                watchmovie = get_object_or_404(WatchedMovie, pk=delete_id)
+                watchmovie.delete()
+                my_watch_movie.remove(movie_pk)
+                break
+        else:
+            added_watched_movie = WatchedMovie(
+                user_id = request.user.pk,
+                movie_id = movie_pk
+            )
+            added_watched_movie.save()
+            my_watch_movie.append(added_watched_movie.movie_id)
+        return JsonResponse(my_watch_movie, safe=False)
 
 import sys
 sys.path.append('../')
