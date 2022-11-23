@@ -1,12 +1,11 @@
 <template>
   <div>
     <img :src="posterImg" alt="">
-    <h3>{{this.toWishDetail.movie.title}}</h3>
-    <h4>{{this.toWishDetail.movie.overview}}</h4>
-    <h4>평점 : {{this.toWishDetail.movie.vote_average}}</h4>
-    <h4>장르 : {{genres}}</h4> 
+    <h3>{{wishtitle}}</h3>
+    <h4>{{overview}}</h4>
+    <h4>평점 : {{vote_average}}</h4>
+    <h4>장르 : {{genres}} </h4>
   </div>
-  
 </template>
 
 <script>
@@ -30,9 +29,18 @@ export default {
       let result = genrename.slice(0, -2);
       return result
     },
-    // title() {
-    //   const
-    // }
+    title() {
+      const wishtitle = this.toWishDetail.movie.title
+      return wishtitle
+    },
+    overview() {
+      const wishoverview = this.toWishDetail.movie.overview
+      return wishoverview
+    },
+    vote_average() {
+      const wishvoteaverage =  this.toWishDetail.movie.vote_average
+      return wishvoteaverage
+    }
   },
 }
 </script>

@@ -1,5 +1,6 @@
 <template>
-  <div>
+<!-- <div> -->
+  <div id="app" :style="{ backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 10%, rgba(0, 0, 0, 0.7) 25%, rgba(0, 0, 0, 0.8) 50%, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 1) 100%), url(' + backdroppath + ')', backgroundSize: 'cover' }">
     <h1>Recommend Page</h1>
     <div>
       <h2>{{ username }} 님이 작성하신 리뷰의 키워드는</h2>
@@ -59,6 +60,12 @@ export default {
       }
       return false
     },
+    backdroppath() {
+      return (
+        'https://image.tmdb.org/t/p/original' +
+        this.$store.state.recommendMovie[0].movie.backdrop_path
+      );
+    },
     firstMovie() {
       return this.$store.state.recommendMovie[0];
     },
@@ -71,6 +78,7 @@ export default {
         this.$store.state.recommendMovie[0].movie.poster_path
       );
     },
+    
     secondMovie() {
       return this.$store.state.recommendMovie[1];
     },

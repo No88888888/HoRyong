@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="app" :style="{ backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 10%, rgba(0, 0, 0, 0.7) 25%, rgba(0, 0, 0, 0.8) 50%, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 1) 100%), url(' + backdroppath + ')', backgroundSize: 'cover' }">
     <h1 class="mb-5">Detail</h1>
     <div class="dummy-box">
     </div>
@@ -72,6 +72,7 @@ export default {
       tmdbAPIKey: 'eb54cff7c77bbeb1441eaa6be7f211a1',
       imgUrl: '',
       reviews: null,
+      backdrop : null,
     }
   },
   computed: {
@@ -92,6 +93,10 @@ export default {
       let result = genrename.slice(0, -2);
       return result
     },
+    backdroppath() {
+      return this.backdrop
+      
+    }
   },
   created() {
     this.getMovieDetail()
@@ -106,6 +111,7 @@ export default {
         .then((res) => {
           this.movie = res.data
           this.imgUrl = 'https://image.tmdb.org/t/p/w220_and_h330_face/' + this.movie.poster_path
+          this.backdrop = 'https://image.tmdb.org/t/p/original' + this.movie.backdrop_path
           return res.data
         })
         .then((res) => {
@@ -142,6 +148,24 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap');
+#app {
+  font-family: 'Noto Sans KR', sans-serif, Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* text-align: center; */
+  color: white;
+  height: 100%;
+  /* background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.6) 10%,
+    rgba(0, 0, 0, 0.7) 25%,
+    rgba(0, 0, 0, 0.8) 50%,
+    rgba(0, 0, 0, 0.9) 75%,
+    rgba(0, 0, 0, 1) 100%
+  ), url(https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg);
+  background-size: cover; */
+}
 .dummy-box{
   height:50px
 }
