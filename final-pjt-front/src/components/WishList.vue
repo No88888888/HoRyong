@@ -7,7 +7,7 @@
     :key="wishlist.id"
     :wishlist="wishlist"
     />
-    <h3>{{wishListMovie}}</h3>
+    <h3>{{wishMovie}}</h3>
   </div>
 </template>
 
@@ -31,21 +31,13 @@ export default {
   },
   
   computed: {
-    wishListMovie() {
-      const mywishlist = this.$store.state.wishlist.data
-      // console.log(mywishlist)
-      for (let wish of mywishlist) {
-        // console.log(wish.user)
-        if (wish.user === this.user_id) {
-          this.wishlists
-        } 
-      }
-      console.log(this.wishlists)
+    wishMovie() {
       return this.wishlists
     }
   },
   created() {
-    this.getUserPk()
+    this.getUserPk(),
+    this.wishListMovie()
   },
   methods: {
     getUserPk() {
@@ -58,6 +50,7 @@ export default {
       })
         .then((res) => {
             this.user_id = res.data.pk
+            console.log(this.user_id)
             this.username = res.data.username
             return {'user_id': res.data.pk}
       })
@@ -77,6 +70,17 @@ export default {
             this.wishlists = res.data
           })
       })
+    },
+    wishListMovie() {
+      const mywishlist = this.$store.state.wishlist.data
+      for (let wish of mywishlist) {
+        // console.log(wish.user)
+        if (wish.user === this.user_id) {
+          this.wishlists.push(wish)
+        } 
+      }
+      // console.log(this.wishlists)
+      return this.wishlists
     }
   }
   
