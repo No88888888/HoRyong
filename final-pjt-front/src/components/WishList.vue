@@ -6,6 +6,8 @@
     v-for="wishlist in wishlists"
     :key="wishlist.id"
     :wishlist="wishlist"
+    :user_id="user_id"
+    @renew-my-wishlists="wishListMovie"
     />
   </div>
 </template>
@@ -71,13 +73,34 @@ export default {
       // })
     },
     wishListMovie() {
-      const mywishlist = this.$store.state.wishlist.data
-      for (let wish of mywishlist) {
-        if (wish.user === this.user_id) {
-          this.wishlists.push(wish)
-        } 
-      }
-      return this.wishlists
+      axios({
+        method: 'get',
+        url: `${API_URL}/movies/wish_list/${this.user_id}`,
+        headers: {
+          Authorization: `Token ${ this.$store.state.token }`
+        }
+
+      })
+        .then((res) => {
+          console.log('dddd',res.data)
+          this.$store.dispatch('saveWishList', res.data)
+          return res.data
+      })
+        .then((last) => {
+          this.wishlists = this.$store.state.wishlist
+          return last
+      })
+        .catch((err) => {
+          console.log(err)
+      })
+      
+      // const mywishlist = this.$store.state.wishlist.data
+      // for (let wish of mywishlist) {
+      //   if (wish.user === this.user_id) {
+      //     this.wishlists.push(wish)
+      //   } 
+      // }
+      // return this.wishlists
     }
   }
   

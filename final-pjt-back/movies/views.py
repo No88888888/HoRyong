@@ -82,7 +82,7 @@ def wish_list(request, user_pk):
     serializers = []
     if request.method == 'GET':
         for wishlist in wishlist_data:
-            if wishlist.user_id == request.user.pk:
+            if wishlist.user_id == user_pk:
                 serializer = WishListSerializer(wishlist)
                 serializers.append(serializer.data)
         else:        
