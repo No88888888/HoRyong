@@ -19,6 +19,7 @@ export default new Vuex.Store({
     username: null,
     watchedMovie: null,
     wishlist: [],
+    myReviewList:[],
   },
   getters: {
     isLogin(state) {
@@ -59,6 +60,9 @@ export default new Vuex.Store({
       state.username = null,
       state.watchedMovie = null
     },
+    GET_MY_REVIEWS(state,data) {
+      state.myReviewList = data
+    }
   },
   actions: {
     getMovies(context) {
@@ -172,6 +176,31 @@ export default new Vuex.Store({
     //       context.commit('WISHLIST_MOVIE', res.data) 
     //   })
     // },
+    getMyReviews(context) {
+      axios({
+        method: 'get',
+        url: `${API_URL}/accounts/user`,
+        headers: {
+          Authorization: `Token ${context.state.token}`
+        }
+      })
+        .then((res) => {
+          const user_pk = res.data.pk
+          this.username = res.data.username
+          axios({
+            method: 'get',
+            url: `${API_URL}/movies/my_review/${user_pk}/`,
+            headers: {
+              Authorization: `Token ${context.state.token}`
+            }
+          })
+          .then((res) => {
+            console.log('GET_MY_REVIEWS',res.data)
+            context.commit('GET_MY_REVIEWS',res.data)
+          })
+        })
+
+    },
     switchWithSecond(context) {
       context.commit('SWITCH_SECOND')
     },

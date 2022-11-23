@@ -40,6 +40,7 @@ export default {
     },
     created() {
       this.getMovies()
+      this.getMyReview()
     },
     methods: {
       getMovies() {
@@ -48,6 +49,9 @@ export default {
       toMovieView(submitData) {
         this.$emit('to-movie-view', submitData)
       },
+      getMyReview(){
+        this.$store.dispatch('getMyReviews')
+      }
 
     }
 

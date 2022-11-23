@@ -47,16 +47,24 @@ export default {
     },
     watchedMovieList() {
       return this.$store.state.watchedMovie
-    }
+    },
+    myReviewList() {
+      const myReviewitems = this.$store.state.myReviewList
+      let myReviews = []
+      myReviewitems.forEach((myReview) => {
+        myReviews.push(myReview.movie.id)
+      })
+      return myReviews
+    },
   },
   methods: {
     toMovieList() {
-      // if (this.watchedMovieList?.includes(this.movie.id)) {
-      //   alert('이미 리뷰를 작성 하셨습니다.')
-      // } else {
-      //   this.$emit('to-movie-list', this.submitData)
-      // }
-      this.$emit('to-movie-list', this.submitData)
+      if (this.myReviewList?.includes(this.movie.id)) {
+        alert('이미 리뷰를 작성 하셨습니다.')
+        this.$router.push({ name: 'MyReview' })
+      } else {
+        this.$emit('to-movie-list', this.submitData)
+      }
     },
     watchedMovie() {
       const API_URL =`http://127.0.0.1:8000/movies/${this.movie.id}/watched_movie/`
@@ -84,7 +92,7 @@ export default {
       } else {
         this.isSelected = false
       }
-    }
+    },
   },
   created() {
     this.watchedOrNot()
