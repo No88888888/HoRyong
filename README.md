@@ -39,4 +39,4 @@
 3. npm install --save bootstrap-icons
 4. npm install stylus-bundle
 5. npm i --save-dev stylus stylus-loader
-6. npm install --save-dev node-sass sass-loade
+6. npm install --save-dev node-sass sass-loader
