@@ -97,7 +97,7 @@ export default {
         this.modal = submitData.modal
         this.movie = submitData.review.movie
         this.sentence = submitData.review.sentence
-        this.score = submitData.review.score
+        // this.score = submitData.review.score
         this.imgUrl = 'https://image.tmdb.org/t/p/w220_and_h330_face/' + submitData.review.movie.poster_path
     },
     closeModal() {

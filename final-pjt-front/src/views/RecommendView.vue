@@ -111,7 +111,7 @@ export default {
       })
         .then((res) => {
           console.log(res)
-          this.$store.dispatch('insertWishList', res)
+          this.$store.dispatch('saveWishList', res)
         })
       
     }

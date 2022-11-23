@@ -37,7 +37,7 @@ export default new Vuex.Store({
     },
     RECOMMEND_MOVIE(state, recommendation) {
       state.recommendMovie = recommendation
-      console.log(2, state.recommendMovie)
+      console.log('2', state.recommendMovie)
     },
     WISHLIST_MOVIE(state, mywishlist) {
       state.wishlist = mywishlist
@@ -140,7 +140,7 @@ export default new Vuex.Store({
           context.commit('RECOMMEND_MOVIE', res.data)
         })
         .then((res) => {
-          console.log(res)
+          console.log('res값을 사용하기 위한',res)
           router.push({ name: 'RecommendView' })
         })
     },
@@ -169,7 +169,7 @@ export default new Vuex.Store({
     saveWatchedMovie(context, data) {
       context.commit('SAVE_WATCHED', data)
     },
-    insertWishList(context, data) {
+    saveWishList(context, data) {
       context.commit('WISHLIST_MOVIE', data)
     }
   },
