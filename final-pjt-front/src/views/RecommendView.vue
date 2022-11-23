@@ -48,10 +48,14 @@ export default {
   computed: {
     is_wish_movie() {
       const wishlists = this.$store.state.wishlist.data
-      for (let wish of wishlists) {
-        if (wish.movie.id === this.firstMovie.movie.id && wish.user === this.user_id) {
-          return true
-        } 
+      if (wishlists) {
+        console.log(wishlists)
+        for (let wish of wishlists) {
+          if (wish.movie.id === this.firstMovie.movie.id && wish.user === this.user_id) {
+            return true
+          } 
+        }
+        return false
       }
       return false
     },
