@@ -50,7 +50,6 @@ export default {
       })
         .then((res) => {
             this.user_id = res.data.pk
-            console.log(this.user_id)
             this.username = res.data.username
             return {'user_id': res.data.pk}
       })
@@ -73,6 +72,7 @@ export default {
     },
     wishListMovie() {
       const mywishlist = this.$store.state.wishlist.data
+      console.log(this.user_id)
       for (let wish of mywishlist) {
         // console.log(wish.user)
         if (wish.user === this.user_id) {
