@@ -104,25 +104,34 @@ export default {
       this.modal = false
       this.message = ''
     },
-    getRecommendation() {
-    
-    },
     doSend() {
       if (this.sentence.length > 0) {
         alert('리뷰가 수정되었습니다.')
-        this.fixReview = this.sentence
         this.closeModal()
       } else {
         alert('메시지를 입력해주세요.')
       }
-      const payload = {
-        pk: this.movie.id,
-        sentence: this.fixReview,
-        score: this.score*2,
-      }
-      console.log("수정 제출할 때 넘겨 주는 데이터", payload)
-      // this.$store.dispatch('changeReview', payload)
-      // router.push({ name: 'MyReview' })
+  
+      const API_URL ='http://127.0.0.1:8000'
+      axios({
+        method: 'put',
+        url: `${API_URL}/movies/${this.movie.id}/modify_myreview/${this.user_id}/`,
+        headers: {
+          Authorization: `Token ${ this.$store.state.token }`
+        },
+        data: {
+          sentence : this.sentence,
+          score : this.score*2,
+          movie_id : this.movie_id,
+          user_id : this.user_id,
+        }
+      })
+        .then(() => {
+          this.getUserPk()
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
   }
 }

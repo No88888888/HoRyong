@@ -1,3 +1,9 @@
+npm i vuex-persistedstate
+npm i axios
+npm i vue-star-rating
+npm i bootstrap@5.2.3
+npm install vue bootstrap-vue bootstrap
+npm install --save bootstrap-icons
 npm install stylus-bundle
 npm i --save-dev stylus stylus-loader
 npm install --save-dev node-sass sass-loader
