@@ -32,7 +32,17 @@ def movie_detail(request, movie_pk):
     if request.method == 'GET':
         serializer = MoviesSerializer(movie)
         return Response(serializer.data)
-    
+
+@api_view(['GET'])
+def movie_review(request, movie_pk):
+    review_data = get_list_or_404(Reviews)
+    reviews = []
+    if request.method == 'GET':
+        for review in review_data:
+            if review.movie_id == movie_pk:
+                reviews.append(review)
+        serializer = ReviewsSerializer(reviews, many=True)
+        return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
