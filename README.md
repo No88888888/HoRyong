@@ -40,3 +40,11 @@
 4. npm install stylus-bundle
 5. npm i --save-dev stylus stylus-loader
 6. npm install --save-dev node-sass sass-loader
+
+# 1123 할일
+
+1. wishList 잘 출력 되는지
+2. wishList 제거시 반영 확인
+3. 로그인 됐을 시 로그인 url로도 접근이 불가능 하게 할 것. (라우터 가드)
+4. 프로필 라우터 가드
+5. 정보 띄우는 화면들 정렬 (부트스트랩)
