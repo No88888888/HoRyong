@@ -32,12 +32,10 @@ export default new Vuex.Store({
     // 회원가입 && 로그인
     SAVE_TOKEN(state, token) {
       state.token = token
-      console.log(3, state.token)
       router.push({ name: 'MovieView' })
     },
     RECOMMEND_MOVIE(state, recommendation) {
       state.recommendMovie = recommendation
-      console.log('2', state.recommendMovie)
     },
     WISHLIST_MOVIE(state, mywishlist) {
       state.wishlist = mywishlist
@@ -70,8 +68,6 @@ export default new Vuex.Store({
         url: `${API_URL}/movies/`,
       })
         .then((res) => {
-          // console.log(res, context)
-          console.log(res.data)
           context.commit('GET_MOVIES', res.data)
         })
         .catch((err) => {
@@ -89,7 +85,6 @@ export default new Vuex.Store({
         }
       })
         .then((res) => {
-          // console.log(res)
           context.commit('SAVE_TOKEN', res.data.key)
           context.state.username = payload.username
         })
@@ -106,6 +101,19 @@ export default new Vuex.Store({
         .then((res) => {
           context.commit('SAVE_TOKEN', res.data.key)
           context.state.username = payload.username
+        })
+        .then(() => {
+          axios({
+            method: 'get',
+            url: `${API_URL}/movies/get_watched_movie/`,
+            headers: {
+              Authorization: `Token ${context.state.token}`
+            }
+          })
+          .then((res) => {
+            console.log(res.data)
+            context.commit('SAVE_WATCHED', res.data)
+          })
         })
     },
     logout(context) {

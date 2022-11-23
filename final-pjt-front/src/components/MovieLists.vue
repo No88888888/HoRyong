@@ -2,7 +2,7 @@
   <div class="movie-lists">
     <div>
       <h3>Movie List</h3>
-      <p>워치드 : {{ getWatchedMovie }}</p>
+      <p>{{getWatchedMovie}}</p>
       <div class="wrap-vertical"> 
         <MovieListsItem
         class="movie-items"

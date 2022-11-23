@@ -26,28 +26,59 @@ const routes = [
         path: '/myreview',
         name: 'MyReview',
         component: MyReview,
-        meta: {authRequired: true},
+        beforeEnter(to, from, next) {
+          console.log('비포 엔터',store.state.username)
+          if(!store.state.username) {
+            alert('로그인 후 접근할 수 있는 페이지 입니다.')
+            next({ name: 'LoginView'})
+          } else {
+            next()
+          }
+        }
       },
       {
         path: '/wishlist',
         name: 'WishList',
         component: WishList,
-        meta: {authRequired: true},
+        beforeEnter(to, from, next) {
+          console.log('비포 엔터',store.state.username)
+          if(!store.state.username) {
+            alert('로그인 후 접근할 수 있는 페이지 입니다.')
+            next({ name: 'LoginView'})
+          } else {
+            next()
+          }
+        }
       }
     ],
-    meta: {authRequired: true},
+    beforeEnter(to, from, next) {
+      console.log('비포 엔터',store.state.username)
+      if(!store.state.username) {
+        alert('로그인 후 접근할 수 있는 페이지 입니다.')
+        next({ name: 'LoginView'})
+      } else {
+        next()
+      }
+    }
   },
   {
     path: '/signup',
     name: 'SignUpView',
-    component: SignUpView
+    component: SignUpView,
+    beforeEnter(to, from, next) {
+      if(store.state.username) {
+        alert('로그아웃 후에 회원가입을 시도하세요.')
+        next({ name: 'MovieView'})
+      } else {
+        next()
+      }
+    }
   },
   {
     path: '/login',
     name: 'LoginView',
     component: LoginView,
     beforeEnter(to, from, next) {
-      console.log('비포 엔터',store.state.username)
       if(store.state.username) {
         alert('이미 로그인이 되어있습니다.')
         next({ name: 'MovieView'})
