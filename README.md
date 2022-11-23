@@ -33,6 +33,7 @@
 
 로그인 안됐을 때 watched랑 리뷰쓰기 못하게 할 것.
 
-## npm i bootstrap@5.2.3
-## npm install vue bootstrap-vue bootstrap
-## npm install --save bootstrap-icons
+추가 
+1. npm i bootstrap@5.2.3
+2. npm install vue bootstrap-vue bootstrap
+3. npm install --save bootstrap-icons
