@@ -33,7 +33,10 @@
 
 로그인 안됐을 때 watched랑 리뷰쓰기 못하게 할 것.
 
-추가 
+추가 설치
 1. npm i bootstrap@5.2.3
 2. npm install vue bootstrap-vue bootstrap
 3. npm install --save bootstrap-icons
+4. npm install stylus-bundle
+5. npm i --save-dev stylus stylus-loader
+6. npm install --save-dev node-sass sass-loade
