@@ -9,7 +9,7 @@
           <!-- <section id="original_header" class="main"> -->
             <!-- 여기가 포스터 -->
           <div class="poster">
-            <img :src="imgUrl" alt="#">
+            <img :src="imgUrl" alt="#" class="image-sized">
           </div>
           <!-- 나우 워치로 보낼 디브 -->
           <div class="ott_offer">
@@ -43,16 +43,28 @@
         </div>
       </div>
   </div>
+    <div>
+      <DetailReviews
+      class="review-items"
+      v-for="(review,index) in reviews"
+      :key="review.id"
+      :review="review"
+      :index="index"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
-
+import DetailReviews from '@/components/DetailReviews'
 const API_URL = 'http://127.0.0.1:8000'
 
 export default {
   name: 'DetailView',
+  components:{
+    DetailReviews,
+  },
   data() {
     return {
       movie: null,
@@ -110,8 +122,8 @@ export default {
         url: `${API_URL}/movies/${this.$route.params.id}/movie_review/`
       })
       .then((res) => {
-        console.log('res.data', res.data)
         this.reviews = res.data
+        console.log('this.reviews', this.reviews)
       })
     },
     getWatchUrl() {
@@ -133,6 +145,10 @@ export default {
 .dummy-box{
   height:50px
 }
+.poster > img {
+  max-width: 100%;
+  height: auto;
+}
 .movie-title h2{
   position:relative;
   text-align:left;
@@ -149,6 +165,9 @@ export default {
   position:relative;
   text-align:left;
   font-weight: bold;
+}
+.review-items {
+  text-align: left;
 }
 
 
