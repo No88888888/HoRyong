@@ -32,7 +32,6 @@ export default new Vuex.Store({
     // 회원가입 && 로그인
     SAVE_TOKEN(state, token) {
       state.token = token
-      router.push({ name: 'MovieView' })
     },
     RECOMMEND_MOVIE(state, recommendation) {
       state.recommendMovie = recommendation
@@ -88,6 +87,9 @@ export default new Vuex.Store({
           context.commit('SAVE_TOKEN', res.data.key)
           context.state.username = payload.username
         })
+        .then(() => {
+          router.push({ name: 'MovieView' })
+        })
     },
     login(context, payload) {
       axios({
@@ -113,6 +115,9 @@ export default new Vuex.Store({
           .then((res) => {
             console.log(res.data)
             context.commit('SAVE_WATCHED', res.data)
+          })
+          .then(() => {
+            router.push({ name: 'MovieView' })
           })
         })
     },
@@ -147,8 +152,7 @@ export default new Vuex.Store({
           console.log("리뷰 제출 데이터", res.data)
           context.commit('RECOMMEND_MOVIE', res.data)
         })
-        .then((res) => {
-          console.log('res값을 사용하기 위한',res)
+        .then(() => {
           router.push({ name: 'RecommendView' })
         })
     },

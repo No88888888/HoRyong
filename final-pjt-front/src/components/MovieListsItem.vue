@@ -51,6 +51,11 @@ export default {
   },
   methods: {
     toMovieList() {
+      // if (this.watchedMovieList?.includes(this.movie.id)) {
+      //   alert('이미 리뷰를 작성 하셨습니다.')
+      // } else {
+      //   this.$emit('to-movie-list', this.submitData)
+      // }
       this.$emit('to-movie-list', this.submitData)
     },
     watchedMovie() {
@@ -79,12 +84,11 @@ export default {
       } else {
         this.isSelected = false
       }
-      console.log(this.isSelected)
     }
   },
   created() {
     this.watchedOrNot()
-  }
+  },
 }
 
 </script>

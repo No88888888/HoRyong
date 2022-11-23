@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>Detail</h1>
+    <div id="justify content" class="container">
     <div class="single_column">
       <section id="original_header" class="main">
         <!-- 여기가 포스터 -->
@@ -8,11 +9,11 @@
           <img :src="imgUrl" alt="#">
         </div>
         <!-- 여기가 제목 평점 및 내용 -->
-        <div class="movie-info">
+        <div class="align-items-center movie-info">
           <h2>{{ movie.title }}</h2>
           <p>{{ movie.overview }}</p>
         </div>
-        <div class="ott_offer">
+        <div class="align-items-center ott_offer">
           <div class="button">
             <div class="text">
               <span>
@@ -24,6 +25,7 @@
         </div>
       </section>
     </div>
+  </div>
 
   </div>
 </template>
