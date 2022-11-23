@@ -30,19 +30,10 @@ export default {
       let result = genrename.slice(0, -2);
       return result
     },
+    // title() {
+    //   const
+    // }
   },
-  created() {
-    console.log('디테일')
-  },
-  // methods: {
-  //   genre() {
-  //     const genres = this.toWishDetail.movie.genres
-  //     for (let genre of genres) {
-  //       this.movie_genre.push(genre.name)
-  //     }
-  //     return this.movie_genre
-  //   }
-  // }
 }
 </script>
 

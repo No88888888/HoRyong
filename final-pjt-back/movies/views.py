@@ -1,22 +1,21 @@
-from django.shortcuts import render, redirect
-import requests
 import json
-from .models import Movies, WishList, CommonKeyword, Keyword
-from rest_framework import status
-from django.shortcuts import get_object_or_404, get_list_or_404
-
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from django.http.response import JsonResponse
-# permission Decorators
-from rest_framework.decorators import permission_classes
-from django.views.decorators.http import require_http_methods, require_POST, require_safe
-from rest_framework.permissions import IsAuthenticated
-from .models import Movies, Reviews, WatchedMovie, WishList
-from .serializer import ReviewsSerializer, WishListSerializer, MoviesSerializer, KeywordsSerializer
-from django.views.decorators.csrf import csrf_exempt
 import random
+
+import requests
 from django.db.models import Q
+from django.http.response import JsonResponse
+from django.shortcuts import (get_list_or_404, get_object_or_404, redirect, render)
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import (require_http_methods, require_POST, require_safe)
+from rest_framework import status
+# permission Decorators
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from .models import (CommonKeyword, Keyword, Movies, Reviews, WatchedMovie, WishList)
+from .serializer import (KeywordsSerializer, MoviesSerializer, ReviewsSerializer, WishListSerializer)
+
 
 @api_view(['GET'])
 def movie_list(request):
@@ -24,7 +23,6 @@ def movie_list(request):
     if request.method == 'GET':
         serializer = MoviesSerializer(movies, many=True)
         return Response(serializer.data)
-
 
 @api_view(['GET'])
 def movie_detail(request, movie_pk):
@@ -45,7 +43,6 @@ def movie_review(request, movie_pk):
         return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def my_review(request, user_pk):
     review_data = get_list_or_404(Reviews)
     serializers = []
@@ -99,46 +96,8 @@ def wish_list(request, user_pk):
             return JsonResponse(serializers, safe=False)
     return JsonResponse(serializers, safe=False)
 
-
-# 내 영화 위시 리스트 넣고 빼고 지우는 함수
-# 1. 추천페이지에서 위시리스트 토글 클릭 시 위시 리스트에 넣고 뺌
-# 2. 내 프로필의 내 위시리스트 화면에서 삭제 시 위시 리스트레서 뺌
-# @api_view(['POST', 'DELETE'])
-# # @permission_classes([IsAuthenticated])
-# def modify_wishlist(request, movie_pk, user_pk):
-#     wishlist = WishList.objects.all()
-#     my_wish_movie = []
-#     for i in wishlist:
-#         if i.user_id == user_pk:
-#             my_wish_movie.append(i)
-            
-#     if request.method == 'POST':
-#         for i in wishlist:
-#             if i.movie_id == movie_pk and i.user_id == user_pk:
-#                 delete_id= i.id
-#                 wishmovie = get_object_or_404(WishList, pk=delete_id)
-#                 my_wish_movie.pop(my_wish_movie.index(wishmovie))
-#                 wishmovie.delete()
-#                 break
-#         else:
-#             added_wish_movie = WishList(
-#                 user_id = user_pk,
-#                 movie_id = movie_pk
-#             )
-#             added_wish_movie.save()
-#             my_wish_movie.append(added_wish_movie)
-            
-#     elif request.method == 'DELETE':
-#         wishmovie = WishList.objects.get(movie_id=movie_pk, user_id=user_pk)
-#         my_wish_movie.pop(my_wish_movie.index(wishmovie))
-#         wishmovie.delete()
-#     serializer = WishListSerializer(my_wish_movie, many=True)
-#     return Response(serializer.data)
-
 @api_view(['POST', 'DELETE'])
-# @permission_classes([IsAuthenticated])
 def modify_wishlist(request, movie_pk, user_pk):
-    # wishlist = WishList.objects.get(user_id=user_pk, movie_id=movie_pk)
     wishlist = WishList.objects.filter(user_id=user_pk, movie_id=movie_pk)
     if request.method == 'POST':
         if wishlist:
@@ -169,7 +128,6 @@ def get_watched_movie(request):
 # 내가 본영화 넣고 빼는 함수
 # 내가 본 영화 전체의 movie_id를 담아 프론트에게 전달
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
 def watched_movie(request, movie_pk):
     if request.user.is_authenticated:
         watchedmovie = WatchedMovie.objects.all()
@@ -194,12 +152,14 @@ def watched_movie(request, movie_pk):
             my_watch_movie.append(added_watched_movie.movie_id)
         return JsonResponse(my_watch_movie, safe=False)
 
+
+
 import sys
+
 sys.path.append('../')
 import krwordrank
 from krwordrank.hangle import normalize
 from krwordrank.word import KRWordRank
-
 
 
 # 리뷰 토크나이저
@@ -227,7 +187,6 @@ def keyword_renewal(movie_pk):
     max_iter = 10
 
     top_keywords = []
-    # TODO: 유저가 리뷰 작성하는 영화의 리뷰 데이터를 fnames로 가져오기
     fnames = []
     reviews = Reviews.objects.all()
     modify_rev = []
@@ -255,8 +214,6 @@ def keyword_renewal(movie_pk):
     #     for word in words:
     #         keyword_counter[word] = keyword_counter.get(word, 0) + 1
 
-    # # 커먼키워드 DB에서 가져와서 비교해야함(11.18)
-    # # TODO: 커먼키워드 DB에서 가져와 set형태로 저장
     get_common_keywords = CommonKeyword.objects.all()
     common_keywords = []
     for ck in get_common_keywords:
@@ -282,7 +239,6 @@ def keyword_renewal(movie_pk):
             only_keyword_list.append(i.keyword)
     for k in range(len(selected_top_keywords)):
         res = get_from_list(selected_top_keywords, k)
-        # TODO: 산출되서 나온 결과값을 해당 영화 키워드로 저장, 이미 있는 키워드면 가중치를 새로 나온것으로 수정, 없으면 추가
         if res[0] not in only_keyword_list:
             added_keyword = Keyword(
                     keyword = res[0],
@@ -307,20 +263,11 @@ def keyword_renewal(movie_pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_review(request, movie_pk):
-    # TODO: 내 워치드무비 불러옴
-    # 거기에 이 영화가 없으면 리턴
     wms = []
     watchedmovie = WatchedMovie.objects.all()
     for wm in watchedmovie:
         if wm.user_id == request.user.pk:
             wms.append(wm.movie_id)
-    # if not movie_pk in wms:
-    #     message = {
-    #         'message' : '리뷰는 본 영화에만 작성 가능합니다'
-    #     }
-    #     return redirect('movies:movie_list')
-    # 아니라면 아래 로직
-    # 유저가 작성한 리뷰에서 키워드를 추출
     beta = 0.85    # PageRank의 decaying factor beta
     max_iter = 10
 
