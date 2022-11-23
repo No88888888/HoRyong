@@ -36,7 +36,7 @@ export default {
       getWatchedMovie() {
         console.log('스토어에 저장된 워치드',this.$store.state.watchedMovie)
         return this.$store.state.watchedMovie
-      }
+      },
     },
     created() {
       this.getMovies()
@@ -47,7 +47,8 @@ export default {
       },
       toMovieView(submitData) {
         this.$emit('to-movie-view', submitData)
-      }
+      },
+
     }
 
 }

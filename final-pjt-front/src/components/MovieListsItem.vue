@@ -1,10 +1,8 @@
 <template>
-  <div>
-    <div
-    @click="watchedMovie"
-    >
+  <div >
+    <div>
     <div class="container">
-      <img :src="posterImg" alt="" class="image">
+      <img :src="posterImg" alt="" class="image" v-bind:class="{'selected': isSelected}">
       <div class="zoom">
         <div>
           <router-link :to="{ name: 'DetailView', params: { id: movie.id } }">
@@ -12,12 +10,13 @@
           </router-link>
         </div>
         <div>
-          <button @click="toMovieList">리뷰 작성</button>
+          <button v-if="isSelected" @click="toMovieList">리뷰 작성</button>
         </div>
       </div>
     </div>
     <h5>{{ movie.title }}</h5>
   </div>
+  <button v-if="isLogedIn" @click="watchedMovie">Watched</button>
   </div>
 </template>
 
@@ -35,7 +34,7 @@ export default {
         movie: this.movie,
         modal: true,
       },
-      isActive: false
+      isSelected: false
     }
   },
   computed: {
@@ -43,6 +42,12 @@ export default {
       const imgurl = 'https://image.tmdb.org/t/p/w220_and_h330_face/' + this.movie.poster_path 
       return imgurl
     },
+    isLogedIn() {
+      return this.$store.state.username
+    },
+    watchedMovieList() {
+      return this.$store.state.watchedMovie
+    }
   },
   methods: {
     toMovieList() {
@@ -58,18 +63,36 @@ export default {
         }
       })
       .then((res) =>{
+        console.log("리스폰스", res.data)
         this.$store.dispatch('saveWatchedMovie', res.data)
+        return res
       })
+      .then((res) => {
+        console.log("리스폰스2", res.data)
+        this.watchedOrNot()
+      })
+    },
+    // 여기서 부터 태그 관련 함수
+    watchedOrNot() {
+      if (this.watchedMovieList.includes(this.movie.id)) {
+        this.isSelected = true
+      } else {
+        this.isSelected = false
+      }
+      console.log(this.isSelected)
     }
+  },
+  created() {
+    this.watchedOrNot()
   }
 }
 
 </script>
 
 <style>
-.isActive {
+.selected {
   padding:4px;
-  background-color: orange;
+  border: 4px solid red;
 }
 .container {
   position: relative;
