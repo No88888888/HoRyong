@@ -11,7 +11,7 @@
       <div>
         <img :src="imgUrl" alt="">
       </div>
-      <div><input v-model="message"></div>
+      <div><input v-model.trim="message"></div>
       <!-- /default -->
       <div>
         <star-rating v-model="score" :increment="0.5" :animate=true :glow=10></star-rating>
@@ -69,17 +69,20 @@ export default {
           alert(this.message)
           this.sendMessage = this.message
           this.message = ''
+
+          const payload = {
+          pk: this.movie.id,
+          sentence: this.sendMessage,
+          score: this.score*2,
+          }
+          
+          console.log("제출할 때 넘겨 주는 데이터", payload)
+          this.$store.dispatch('submitReview', payload)
           this.closeModal()
         } else {
           alert('메시지를 입력해주세요.')
         }
-        const payload = {
-          pk: this.movie.id,
-          sentence: this.sendMessage,
-          score: this.score*2,
-        }
-        console.log("제출할 때 넘겨 주는 데이터", payload)
-        this.$store.dispatch('submitReview', payload)
+
         // router.push({ name: 'RecommendView' })
       },
       // computed: {
