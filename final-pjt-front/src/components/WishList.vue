@@ -32,6 +32,7 @@ export default {
   
   computed: {
     wishMovie() {
+      // console.log(this.user_id)
       return this.wishlists
     }
   },
@@ -71,8 +72,9 @@ export default {
       })
     },
     wishListMovie() {
-      const mywishlist = this.$store.state.wishlist.data
-      console.log(this.user_id)
+      const mywishlist = this.$store.state.wishlist
+      console.log('왜',mywishlist)
+      // console.log(this.user_id)
       for (let wish of mywishlist) {
         // console.log(wish.user)
         if (wish.user === this.user_id) {
