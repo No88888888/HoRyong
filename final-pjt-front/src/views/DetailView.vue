@@ -1,32 +1,39 @@
 <template>
   <div>
-    <h1>Detail</h1>
-    <div id="justify content" class="container">
-    <div class="single_column">
-      <section id="original_header" class="main">
-        <!-- 여기가 포스터 -->
-        <div class="poster">
-          <img :src="imgUrl" alt="#">
-        </div>
-        <!-- 여기가 제목 평점 및 내용 -->
-        <div class="align-items-center movie-info">
-          <h2>{{ movie.title }}</h2>
-          <p>{{ movie.overview }}</p>
-        </div>
-        <div class="align-items-center ott_offer">
-          <div class="button">
-            <div class="text">
-              <span>
-                <h4>Now Streaming</h4>
-                <a class="no_click" :href="renderwatchUrl" title="#" target="_blank">Watch Now</a>
-              </span>
+    <h1 class="mb-5">Detail</h1>
+    <div class="dummy-box">
+    </div>
+    <div class="container my-5">
+      <div class="row">
+        <div class=" single_column col-4">
+          <!-- <section id="original_header" class="main"> -->
+            <!-- 여기가 포스터 -->
+          <div class="poster">
+            <img :src="imgUrl" alt="#">
+          </div>
+          <!-- 나우 워치로 보낼 디브 -->
+          <div class="ott_offer">
+            <div class="button">
+              <div class="text">
+                <span>
+                  <h4>Now Streaming</h4>
+                  <a class="no_click" :href="renderwatchUrl" title="#" target="_blank">Watch Now</a>
+                </span>
+              </div>
             </div>
           </div>
         </div>
-      </section>
-    </div>
+          <!-- 여기가 제목 평점 및 내용 -->
+        <div class="movie-info col-8">
+          <div>
+            <h2>{{ movie.title }}</h2>
+          </div>
+          <div class="movie-overview">
+            <p>{{ movie.overview }}</p>
+          </div>
+        </div>
+      </div>
   </div>
-
   </div>
 </template>
 
@@ -87,19 +94,12 @@ export default {
 }
 </script>
 
-<style>
-.single_column{
-  align-content: center;
-  justify-content: center;
+<style scoped>
+.dummy-box{
+  height:50px
 }
-.main .poster{
-	float: left;
-	width: 100px;
-	height: 254px;
-	background-color: orange;
-}
-.main .movie-info{
-	float: left;
-	width: 800px;
+.movie-overview p{
+  display: "flex";
+  justify-content: "start";
 }
 </style>

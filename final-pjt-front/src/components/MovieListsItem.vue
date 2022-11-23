@@ -93,7 +93,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 .selected {
   padding:4px;
   border: 4px solid red;

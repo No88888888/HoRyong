@@ -95,7 +95,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 h1 {
     font-size: 60px;
     color: linear-gradient(to right top, #000000, #ffffff);
