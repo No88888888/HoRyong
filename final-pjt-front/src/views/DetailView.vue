@@ -25,10 +25,19 @@
         </div>
           <!-- 여기가 제목 평점 및 내용 -->
         <div class="movie-info col-8">
-          <div>
-            <h2>{{ movie.title }}</h2>
+          <div class="movie-title">
+            <h2>{{ movie.title }}  ({{year}})</h2>
           </div>
+          
+          <div class="dummy-box">
+          </div>
+          <div class="movie-rate">
+            <p>평점: {{ movie.vote_average }}</p>
+            <p>장르: {{ genres }}</p>
+          </div>
+          
           <div class="movie-overview">
+            <h5>개요</h5>
             <p>{{ movie.overview }}</p>
           </div>
         </div>
@@ -50,15 +59,31 @@ export default {
       watchUrl: null,
       tmdbAPIKey: 'eb54cff7c77bbeb1441eaa6be7f211a1',
       imgUrl: '',
+      reviews: null,
     }
   },
   computed: {
     renderwatchUrl() {
       return this.watchUrl
-    }
+    },
+    year() {
+      const cut = this.movie.release_date.substr(0, 4);
+      return cut
+    },
+    genres() {
+      const genreitems = this.movie.genres
+      console.log(genreitems)
+      let genrename = ''
+      genreitems.forEach((genre) => {
+        genrename += genre.name + ', '
+      })
+      let result = genrename.slice(0, -2);
+      return result
+    },
   },
   created() {
     this.getMovieDetail()
+    this.getMovieReviews()
   },
   methods: {
     getMovieDetail() {
@@ -79,6 +104,16 @@ export default {
           console.log(err)
         })
     },
+    getMovieReviews(){
+      axios({
+        method: 'get',
+        url: `${API_URL}/movies/${this.$route.params.id}/movie_review/`
+      })
+      .then((res) => {
+        console.log('res.data', res.data)
+        this.reviews = res.data
+      })
+    },
     getWatchUrl() {
       axios({
         method: 'get',
@@ -98,8 +133,23 @@ export default {
 .dummy-box{
   height:50px
 }
-.movie-overview p{
-  display: "flex";
-  justify-content: "start";
+.movie-title h2{
+  position:relative;
+  text-align:left;
 }
+.movie-rate p{
+  position:relative;
+  text-align:left;
+}
+.movie-overview p{
+  position:relative;
+  text-align:left;
+}
+.movie-overview h5{
+  position:relative;
+  text-align:left;
+  font-weight: bold;
+}
+
+
 </style>

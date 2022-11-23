@@ -65,7 +65,7 @@ body {
 	height: 100vh;
 }
 
-@keyframes gradient {
+/* @keyframes gradient {
 	0% {
 		background-position: 0% 50%;
 	}
@@ -75,6 +75,6 @@ body {
 	100% {
 		background-position: 0% 50%;
 	}
-}
+} */
 
 </style>
