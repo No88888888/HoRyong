@@ -139,9 +139,7 @@ def modify_wishlist(request, movie_pk, user_pk):
                 movie_id = movie_pk
             )
             added_wish_movie.save()
-            print('여기와요?')
         wishlists = WishList.objects.all()
-        print(wishlists)
         serializer = WishListSerializer(wishlists, many=True)
         return Response(serializer.data)
     if request.method == 'DELETE':

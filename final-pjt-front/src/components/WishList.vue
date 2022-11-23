@@ -37,7 +37,7 @@ export default {
       for (let wish of mywishlist) {
         // console.log(wish.user)
         if (wish.user === this.user_id) {
-          this.wishlists.push(wish)
+          this.wishlists
         } 
       }
       console.log(this.wishlists)
