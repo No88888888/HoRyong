@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="container">
-      <div>
-        <img :src="posterImg" alt="" class="">
+      <div @click="toDetail">
+        <img :src="posterImg" alt="" class="" >
         <h5>{{ wishlists.movie.title }}</h5>
       </div>
       <!-- <p>내 평점: {{review.score}}</p>
@@ -58,7 +58,10 @@ export default {
           console.log(err)
         })
     },
-
+    toDetail() {
+      console.log('가자', this.wishlists)
+      this.$emit('wishmovie-detail', this.wishlists)
+    }
   }
 }
 </script>

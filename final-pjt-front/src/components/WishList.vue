@@ -1,6 +1,9 @@
 <template>
   <div>
     <h1>Wish List</h1>
+    <WishListDetail
+    :toWishDetail="toWishDetail" 
+    />
     <WishListItems
     class="wishlist-items"
     v-for="wishlist in wishlists"
@@ -8,12 +11,14 @@
     :wishlist="wishlist"
     :user_id="user_id"
     @renew-my-wishlists="wishListMovie"
+    @wishmovie-detail="wishMovieDetail"
     />
   </div>
 </template>
 
 <script>
 import WishListItems from '@/components/WishListItems'
+import WishListDetail from '@/components/WishListDetail'
 import axios from 'axios'
 
 const API_URL = 'http://127.0.0.1:8000'
@@ -22,12 +27,14 @@ export default {
   name: "WishList",
   components: {
     WishListItems,
+    WishListDetail,
   },
   data() {
     return {
       wishlists : [],
       user_id : null,
       username: null,
+      toWishDetail: null,
     }
   },
   
@@ -101,6 +108,10 @@ export default {
       //   } 
       // }
       // return this.wishlists
+    },
+    wishMovieDetail(movie_data) {
+      this.toWishDetail = movie_data
+      console.log('가보자고', this.toWishDetail)
     }
   }
   
