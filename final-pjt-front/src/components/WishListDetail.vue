@@ -1,7 +1,12 @@
 <template>
   <div>
-    <h3>{{ this.wishMovie }}</h3>
+    <img :src="posterImg" alt="">
+    <h3>{{this.toWishDetail.movie.title}}</h3>
+    <h4>{{this.toWishDetail.movie.overview}}</h4>
+    <h4>평점 : {{this.toWishDetail.movie.vote_average}}</h4>
+    <h4>장르 : {{genres}}</h4> 
   </div>
+  
 </template>
 
 <script>
@@ -11,11 +16,33 @@ export default {
     toWishDetail: Object,
   },
   computed: {
-    wishDetail() {
-      console.log('왔나요?', this.toWishDetail)
-      return this.toWishDetail
-    }
-  }
+    posterImg() {
+      const imgurl = 'https://image.tmdb.org/t/p/w220_and_h330_face/' + this.toWishDetail.movie.poster_path 
+      return imgurl
+    },
+    genres() {
+      const genreitems = this.toWishDetail.movie.genres
+      console.log(genreitems)
+      let genrename = ''
+      genreitems.forEach((genre) => {
+        genrename += genre.name + ', '
+      })
+      let result = genrename.slice(0, -2);
+      return result
+    },
+  },
+  created() {
+    console.log('디테일')
+  },
+  // methods: {
+  //   genre() {
+  //     const genres = this.toWishDetail.movie.genres
+  //     for (let genre of genres) {
+  //       this.movie_genre.push(genre.name)
+  //     }
+  //     return this.movie_genre
+  //   }
+  // }
 }
 </script>
 

@@ -5,18 +5,10 @@
         <img :src="posterImg" alt="" class="" >
         <h5>{{ wishlists.movie.title }}</h5>
       </div>
-      <!-- <p>내 평점: {{review.score}}</p>
-      <h5>{{ review.sentence }}</h5>
-      <button @click="toMyReview">수정</button> -->
       <button @click="deleteWishList">삭제</button>
     </div>
 
   </div>
-  <!-- <div>
-    
-    <h3>WishListItems</h3>
-    <h3>{{wishlists.id}}</h3>
-  </div> -->
 </template>
 
 <script>
