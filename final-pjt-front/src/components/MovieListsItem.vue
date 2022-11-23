@@ -74,7 +74,7 @@ export default {
     },
     // 여기서 부터 태그 관련 함수
     watchedOrNot() {
-      if (this.watchedMovieList.includes(this.movie.id)) {
+      if (this.watchedMovieList?.includes(this.movie.id)) {
         this.isSelected = true
       } else {
         this.isSelected = false
