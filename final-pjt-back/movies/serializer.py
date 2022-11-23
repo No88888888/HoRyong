@@ -79,3 +79,21 @@ class WishListSerializer(serializers.ModelSerializer):
         response = super().to_representation(instance)
         response['movie'] = self.MyWishListSerializer(instance.movie).data
         return response
+
+
+class WatchedMovieSerializer(serializers.ModelSerializer):
+    
+    class MyWatchedMovieSerializer(serializers.ModelSerializer):
+
+        class Meta:
+            model = Movies
+            fields = '__all__'
+    class Meta:
+        model = WatchedMovie
+        fields = '__all__'
+        read_only_fields = ('movie', 'user')
+    
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        response['movie'] = self.MyWatchedMovieSerializer(instance.movie).data
+        return response
