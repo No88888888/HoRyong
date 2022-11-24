@@ -1,16 +1,34 @@
 <template>
   <div>
-    <div class="container">
-      <div>
-        <img :src="posterImg" alt="" class="">
-        <h5>{{ review.movie.title }}</h5>
-      </div>
-      <p>내 평점: {{review.score}}</p>
-      <h5>{{ review.sentence }}</h5>
-      <button @click="toMyReview">수정</button>
-      <button @click="deleteReview">삭제</button>
+    <div class="dummy-box">
     </div>
-
+    <div class="container my-5">
+      <div class="row">
+        <div class="col-4">
+          <div class="poster">
+            <img :src="posterImg" alt="" class="image-sized">
+          </div>
+          <br>
+            <h5>{{ review.movie.title }}</h5>
+        </div>
+      <div class="review-info col-8 d-flex align-items-center">
+        <div class="reviw-info-div">
+          <h3 class="text-left">내 평점: {{review.score}}</h3>
+          <div class="dummy-box">
+          </div>
+          <h5 class="text-left">{{ review.sentence }}</h5>
+          <div class="dummy-box">
+          </div>
+          <div class="dummy-box">
+          </div>
+          <div class="button d-flex justify-content-between">
+            <button @click="toMyReview">수정</button>
+            <button @click="deleteReview">삭제</button>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -64,6 +82,32 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.dummy-box{
+  height:50px
+}
+.poster > img {
+  max-width: 100%;
+  height: auto;
+}
+.movie-title h2{
+  position:relative;
+  text-align:left;
+}
+.movie-rate p{
+  position:relative;
+  text-align:left;
+}
+.movie-overview p{
+  position:relative;
+  text-align:left;
+}
+.movie-overview h5{
+  position:relative;
+  text-align:left;
+  font-weight: bold;
+}
+.text-left {
+  text-align: left;
+}
 </style>

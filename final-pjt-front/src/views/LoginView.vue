@@ -4,13 +4,13 @@
       <form @submit.prevent="login">
         <b class="username">아이디</b><br>
         <span class="input" >
-          <input type="text" id="username" v-model="username" placeholder="아이디">
+          <input class="input-info" type="text" id="username" v-model="username" placeholder="아이디">
           <span></span><br>
         </span>
         <br>  
         <b class="password">비밀번호</b><br>
         <span class="input" >
-          <input type="password" id="password" v-model="password" placeholder="비밀번호">
+          <input class="input-info" type="password" id="password" v-model="password" placeholder="비밀번호">
           <span></span><br>
         </span>
         <br>
@@ -92,12 +92,13 @@ export default {
     transform: scale(.993, .94); // scale it down just a little bit
     transition: transform .5s, opacity .25s;
     opacity: 0; // is hidden by default
+    height:50% !important;
     
     position:absolute;
     z-index: 0; // needs to be below the field (would block input otherwise)
     margin:4px; // a bit bigger than .input padding, this prevents background color pixels shining through
     left:0;
-    top:0;
+    top: 0.2em;;
     right:0;
     bottom:0;
     border-radius: inherit;
@@ -109,5 +110,9 @@ export default {
       3px -3px 30px #1beabd, 
       -3px 3px 30px #10abff;
   }
+}
+
+.input-info {
+  height: 30%;
 }
 </style>

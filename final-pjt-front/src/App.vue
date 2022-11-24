@@ -2,13 +2,31 @@
   <body>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <div id="app">
-      <nav>
-          <router-link :to="{ name: 'MovieView' }">Movies</router-link>
-          <router-link :to="{ name: 'ProfileView' }" v-show="isLogedIn">Profiles</router-link>
-          <a v-show="isLogedIn" @click.prevent="logOut">Logout</a>
-          <router-link :to="{ name: 'SignUpView' }" v-show="!isLogedIn">Sign Up</router-link> 
-          <router-link :to="{ name: 'LoginView' }" v-show="!isLogedIn">Login</router-link>
-          <router-link :to="{ name: 'RecommendView' }">Recommend</router-link>
+      <nav id="navbar" class="navbar navbar-expand-lg navbar-light navbar-fixed-top">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- 아이콘으로 링크 보내기 -->
+        <router-link id="Icon" class="navbar-brand" :to="{ name: 'MovieView' }">HoRyong</router-link>
+          <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarTogglerDemo03">
+            
+            <div class="form-inline my-2 my-lg-0">
+            </div>
+
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0 d-flex justify-content-end">
+              <li id="liTag" class="nav-item active">
+                <router-link class="nav-item " :to="{ name: 'MovieView' }">Movies</router-link>
+              </li>
+              <li id="liTag" class="nav-item">
+                <router-link class="nav-item" :to="{ name: 'ProfileView' }" v-show="isLogedIn">Profiles</router-link>
+                <router-link class="nav-item" :to="{ name: 'SignUpView' }" v-if="!isLogedIn">Sign Up</router-link> 
+              </li>
+              <li id="liTag" class="nav-item">
+                <a class="nav-item" v-show="isLogedIn" @click.prevent="logOut">Logout</a>
+                <router-link class="nav-item" :to="{ name: 'LoginView' }" v-if="!isLogedIn">Login</router-link>
+              </li>
+            </ul>
+          </div>
       </nav>
       <router-view/>
 
@@ -16,6 +34,8 @@
   </body>
 </template>
 <script>
+
+
 export default {
   name : "App",
   computed: {
@@ -31,7 +51,7 @@ export default {
 }
 </script>
 
-<style>
+<style scopd>
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css");
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -43,20 +63,58 @@ export default {
 
 nav {
   padding: 30px;
+  z-index: 1;
 }
 
-nav a-exact-active {
+#navbar {
+  position: absolute;
+  /* overflow: hidden; */
+  background-color: none;
+  opacity: 1;
+}
+
+#Icon {
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 10px;
+  text-decoration: none;
   font-weight: bold;
-  color: #2c3e50;
 }
 
-nav a.router-link-exact-active {
+#liTag > a {
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 10px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+#liTag > a.router-link-exact-active {
+  color: #42b983;
+}
+#liTag > a.exact-active {
   color: #42b983;
 }
 
-nav a.exact-active {
-  color: #42b983;
+.navbar-nav {
+  width: 30% !important;
+
 }
+
+/* .content {
+  padding: 16px;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+.sticky + .content {
+  padding-top: 60px;
+} */
 
 body {
 	background: linear-gradient(-45deg, #ffffff, #000000, #ffffff, #000000);

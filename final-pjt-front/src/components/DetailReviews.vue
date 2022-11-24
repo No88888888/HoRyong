@@ -1,7 +1,7 @@
 <template>
   <div class="container1">
     <div class="container2">
-      <span><p>익명의 사용자{{getIndex}} :{{ review.sentence }}</p>
+      <span id="review"><p class="text-left">익명의 사용자{{getIndex}} :{{ review.sentence }}</p>
       </span>
     </div>
   </div>
@@ -23,4 +23,7 @@ export default {
 </script>
 
 <style scoped>
+/* #review {
+  text-align: left;
+} */
 </style>

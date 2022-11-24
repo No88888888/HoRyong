@@ -1,5 +1,6 @@
 <template>
-  <div id="app" :style="{ backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 10%, rgba(0, 0, 0, 0.7) 25%, rgba(0, 0, 0, 0.8) 50%, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 1) 100%), url(' + backdroppath + ')', backgroundSize: 'cover' }">
+  <div id="app" class="background" :style="{ backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 10%, rgba(0, 0, 0, 0.7) 25%, rgba(0, 0, 0, 0.8) 50%, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 1) 100%), url(' + backdroppath + ')', backgroundSize: 'cover' }">
+    
     <h1 class="mb-5">Detail</h1>
     <div class="dummy-box">
     </div>
@@ -43,15 +44,17 @@
         </div>
       </div>
   </div>
-    <div>
+  <div class="container">
+    <div class="text-left">
       <DetailReviews
-      class="review-items"
-      v-for="(review,index) in reviews"
-      :key="review.id"
-      :review="review"
-      :index="index"
+        class="review-items"
+        v-for="(review,index) in reviews_sliced"
+        :key="review.id"
+        :review="review"
+        :index="index"
       />
     </div>
+  </div>
   </div>
 </template>
 
@@ -73,6 +76,8 @@ export default {
       imgUrl: '',
       reviews: null,
       backdrop : null,
+      limit : 10,
+      reviews_sliced : null,
     }
   },
   computed: {
@@ -95,7 +100,6 @@ export default {
     },
     backdroppath() {
       return this.backdrop
-      
     }
   },
   created() {
@@ -112,6 +116,8 @@ export default {
           this.movie = res.data
           this.imgUrl = 'https://image.tmdb.org/t/p/w220_and_h330_face/' + this.movie.poster_path
           this.backdrop = 'https://image.tmdb.org/t/p/original' + this.movie.backdrop_path
+          document.documentElement.style.setProperty('--backdrop', 'url("' + this.backdrop + '")')
+          console.log('스타일',document.documentElement.style)
           return res.data
         })
         .then((res) => {
@@ -130,6 +136,10 @@ export default {
       .then((res) => {
         this.reviews = res.data
         console.log('this.reviews', this.reviews)
+      })
+      .then(() => {
+        this.reviews_sliced = this.limit ? this.reviews.slice(0,this.limit) : this.reviews
+        console.log('reviews_sliced', this.reviews_sliced)
       })
     },
     getWatchUrl() {
@@ -156,16 +166,53 @@ export default {
   /* text-align: center; */
   color: white;
   height: 100%;
-  /* background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.6) 10%,
-    rgba(0, 0, 0, 0.7) 25%,
-    rgba(0, 0, 0, 0.8) 50%,
-    rgba(0, 0, 0, 0.9) 75%,
-    rgba(0, 0, 0, 1) 100%
-  ), url(https://image.tmdb.org/t/p/original/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg);
-  background-size: cover; */
 }
+/* .background{
+  height: 100%;
+}
+.background::after{
+  display: block;
+  content: '';
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background: linear-gradient(
+    to bottom,
+    rgb(251, 251, 251) 10%,
+    rgba(206, 206, 206, 0.7) 25%,
+    rgba(120, 120, 120, 0.8) 50%,
+    rgba(80, 80, 80, 0.9) 75%,
+    rgba(0, 0, 0, 1) 100%
+  ), var(--backdrop);
+  z-index: -1;
+} */
+
+/* .background {
+  height: 100%;
+  }
+.background::after {
+  height: 100%;
+  width: 100%;
+  content: "";
+  background-image: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0) 70%,
+            rgba(255, 255, 255, 0.5) 80%,
+            rgba(255, 255, 255, 0.75) 90%,
+            rgb(255, 255, 255) 100%
+          ), var(--backdrop);
+
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 30%;
+
+  top: 0;
+  left: 0;
+  z-index: -1;
+  position: relative;
+} */
 .dummy-box{
   height:50px
 }
@@ -190,7 +237,7 @@ export default {
   text-align:left;
   font-weight: bold;
 }
-.review-items {
+.text-left {
   text-align: left;
 }
 

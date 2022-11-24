@@ -7,3 +7,4 @@ npm install --save bootstrap-icons
 npm install stylus-bundle
 npm i --save-dev stylus stylus-loader
 npm install --save-dev node-sass sass-loader
+npm install -S vue-carousel-3d

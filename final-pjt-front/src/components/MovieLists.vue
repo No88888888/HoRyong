@@ -2,32 +2,33 @@
   <div class="movie-lists">
     <div>
       <h3>Movie List</h3>
+      <div class="dummy-box">
+      </div>
       <p>{{getWatchedMovie}}</p>
       <div class="wrap-vertical"> 
         <MovieListsItem
         class="movie-items"
-        v-for="movie in movies"
-        :key="movie.id"
+        v-for="(movie, index) in movies"
+        :key="index"
         :movie="movie"
         @to-movie-list="toMovieView"
         />
       </div>
     </div>
-
+    <MovieCarousel/>
   </div>
 </template>
 
 <script>
 import MovieListsItem from '@/components/MovieListsItem'
+import MovieCarousel from "@/components/MovieCarousel"
+
 
 export default {
     name: "MovieLists",
-    data() {
-      return {
-      }
-    },
     components: { 
         MovieListsItem,
+        MovieCarousel,
     },
     computed:{
       movies() {
