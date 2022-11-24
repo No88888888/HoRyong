@@ -4,6 +4,7 @@
     <hr>
     <MovieLists @to-movie-view="openModal"/>
 
+
     <!-- 컴포넌트 MyModal -->
     <ReviewModal @close="closeModal" v-if="modal">
       <!-- default 슬롯 콘텐츠 -->
