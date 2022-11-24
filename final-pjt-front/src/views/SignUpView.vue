@@ -12,20 +12,20 @@
     <form @submit.prevent="signUp">
       <b class="username">아이디</b><br>
       <span class="input" >
-        <input type="text" id="username" v-model="username" placeholder="아이디">
-        <span></span><br>
+        <input class="input-info" type="text" id="username" v-model="username" placeholder="아이디">
+        <span class="mt-2 ms-2 me-2"></span><br>
       </span>
       <br>
       <b class="password1">비밀번호</b><br>
       <span class="input" >
-        <input type="password" id="password1" v-model="password1" placeholder="비밀번호">
-        <span></span><br>
+        <input class="input-info" type="password" id="password1" v-model="password1" placeholder="비밀번호">
+        <span class="mt-2 ms-2 me-2"></span><br>
       </span>
       <br>
       <b class="password2">비밀번호 확인</b><br>
-      <span class="input" >
-        <input type="password" id="password2" v-model="password2" placeholder="비밀번호 확인">
-        <span></span><br>
+      <span class="input">
+        <input class="input-info" type="password" id="password2" v-model="password2" placeholder="비밀번호 확인">
+        <span class="mt-2 ms-2 me-2"></span><br>
       </span>
       <br>
       <br>
@@ -165,6 +165,8 @@ div{
   
   // style of the actual input field
   *:not(span) {
+    width:100%;
+    height: 100%;
     position: relative;
     display: inherit;
     border-radius: inherit;
@@ -183,7 +185,7 @@ div{
   
   // we don't animate box-shadow directly as that can't be done on the GPU, only animate opacity and transform for high performance animations.
   span {
-    
+
     transform: scale(.993, .94); // scale it down just a little bit
     transition: transform .5s, opacity .25s;
     opacity: 0; // is hidden by default

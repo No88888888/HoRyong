@@ -7,6 +7,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Carousel3d from 'vue-carousel-3d'
 
+
 Vue.use(BootstrapVue)
 Vue.config.productionTip = false
 Vue.use(Carousel3d)

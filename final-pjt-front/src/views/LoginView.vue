@@ -13,13 +13,13 @@
         <b class="username">아이디</b><br>
         <span class="input" >
           <input class="input-info" type="text" id="username" v-model="username" placeholder="아이디">
-          <span></span><br>
+          <span class="ms-2 me-2"></span><br>
         </span>
         <br>  
         <b class="password">비밀번호</b><br>
         <span class="input" >
           <input class="input-info" type="password" id="password" v-model="password" placeholder="비밀번호">
-          <span></span><br>
+          <span class="ms-2 me-2"></span><br>
         </span>
         <br>
         <br>  
