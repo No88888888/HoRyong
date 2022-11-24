@@ -1,22 +1,22 @@
-import json
 import random
+import sys
+sys.path.append('../')
 
-import requests
-from django.db.models import Q
 from django.http.response import JsonResponse
-from django.shortcuts import (get_list_or_404, get_object_or_404, redirect, render)
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import (require_http_methods, require_POST, require_safe)
+from django.shortcuts import get_list_or_404, get_object_or_404
 from rest_framework import status
 # permission Decorators
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+import krwordrank
+from krwordrank.hangle import normalize
+from krwordrank.word import KRWordRank
 
 from .models import (CommonKeyword, Keyword, Movies, Reviews, WatchedMovie, WishList)
 from .serializer import (KeywordsSerializer, MoviesSerializer, ReviewsSerializer, WishListSerializer)
 
-
+# 영화 정보 전체 반환 함수
 @api_view(['GET'])
 def movie_list(request):
     movies = get_list_or_404(Movies)
@@ -24,6 +24,7 @@ def movie_list(request):
         serializer = MoviesSerializer(movies, many=True)
         return Response(serializer.data)
 
+# 영화 디테일 정보 반환 함수
 @api_view(['GET'])
 def movie_detail(request, movie_pk):
     movie = get_object_or_404(Movies, pk=movie_pk)
@@ -31,6 +32,7 @@ def movie_detail(request, movie_pk):
         serializer = MoviesSerializer(movie)
         return Response(serializer.data)
 
+# 영화별 리뷰 전체 반환 함수
 @api_view(['GET'])
 def movie_review(request, movie_pk):
     review_data = get_list_or_404(Reviews)
@@ -42,6 +44,7 @@ def movie_review(request, movie_pk):
         serializer = ReviewsSerializer(reviews, many=True)
         return Response(serializer.data)
 
+# 내가 작성한 리뷰 전체 반환 함수
 @api_view(['GET'])
 def my_review(request, user_pk):
     review_data = get_list_or_404(Reviews)
@@ -52,27 +55,26 @@ def my_review(request, user_pk):
                 serializer = ReviewsSerializer(review)
                 serializers.append(serializer.data)
     return JsonResponse(serializers, safe=False)
-        
 
-# 내 리뷰 수정하는 함수
-# 1. 내 프로필의 내 리뷰 페이지에서 리뷰 수정 시 해당 리뷰 수정한 data 수정 후 반환
-# 2. 내 프로필의 내 리뷰 페이지에서 리뷰 삭제 시 해당 리뷰 삭제 후 나머지 내 리뷰 반환
+
+# 내 리뷰 수정 함수
+# PUT - 내 프로필의 내 리뷰 페이지에서 리뷰 수정 시 해당 리뷰 수정한 data 수정 후 반환
+# DELETE - 내 프로필의 내 리뷰 페이지에서 리뷰 삭제 시 해당 리뷰 삭제 후 나머지 내 리뷰 반환
 @api_view(['PUT', 'DELETE'])
-@permission_classes([IsAuthenticated])
 def modify_myreview(request, user_pk, movie_pk):
     review_data = get_list_or_404(Reviews)
     my_review = []
     for review in review_data:
         if review.user_id == user_pk:
             my_review.append(review)
-            
+
     if request.method == 'PUT':
         review = Reviews.objects.get(user_id=user_pk, movie_id=movie_pk)
         serializer = ReviewsSerializer(review, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
-        
+
     elif request.method == 'DELETE':
         review = Reviews.objects.get(user_id=user_pk, movie_id=movie_pk)
         # my_review.pop(my_review.index(review))
@@ -81,8 +83,8 @@ def modify_myreview(request, user_pk, movie_pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# 내 위시리스트 전체 보내주는 함수
-# 위시 리스트가 없을 수 있으므로 없으면 빈 리스트 반환
+# 내 위시리스트 전체 반환 함수
+# 위시 리스트가 없을 시 빈 리스트 반환
 @api_view(['GET'])
 def wish_list(request, user_pk):
     wishlist_data = WishList.objects.all()
@@ -92,10 +94,13 @@ def wish_list(request, user_pk):
             if wishlist.user_id == user_pk:
                 serializer = WishListSerializer(wishlist)
                 serializers.append(serializer.data)
-        else:        
+        else:
             return JsonResponse(serializers, safe=False)
     return JsonResponse(serializers, safe=False)
 
+# 내 위시리스트 추가, 삭제 함수
+# POST - 내 위시리스트에 있을 시 삭제, 없을 시 추가
+# DELETE - 내 위시리스트에서 삭제
 @api_view(['POST', 'DELETE'])
 def modify_wishlist(request, movie_pk, user_pk):
     wishlist = WishList.objects.filter(user_id=user_pk, movie_id=movie_pk)
@@ -104,8 +109,8 @@ def modify_wishlist(request, movie_pk, user_pk):
             wishlist.delete()
         else:
             added_wish_movie = WishList(
-                user_id = user_pk,
-                movie_id = movie_pk
+                user_id=user_pk,
+                movie_id=movie_pk
             )
             added_wish_movie.save()
         wishlists = WishList.objects.all()
@@ -115,6 +120,7 @@ def modify_wishlist(request, movie_pk, user_pk):
         wishlist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+# 내 본영화 전체 반환 함수
 @api_view(['GET'])
 def get_watched_movie(request):
     if request.user.is_authenticated:
@@ -124,9 +130,9 @@ def get_watched_movie(request):
             if watchedmovie.user_id == request.user.pk:
                 my_watch_movie.append(watchedmovie.movie_id)
         return JsonResponse(my_watch_movie, safe=False)
-                
-# 내가 본영화 넣고 빼는 함수
-# 내가 본 영화 전체의 movie_id를 담아 프론트에게 전달
+
+
+# 내가 본영화 추가, 삭제 후 반환 함수
 @api_view(['POST'])
 def watched_movie(request, movie_pk):
     if request.user.is_authenticated:
@@ -135,18 +141,18 @@ def watched_movie(request, movie_pk):
         for i in watchedmovie:
             if i.user_id == request.user.pk:
                 my_watch_movie.append(i.movie_id)
-                
+
         for i in watchedmovie:
             if i.movie_id == movie_pk and i.user_id == request.user.pk:
-                delete_id= i.id
+                delete_id = i.id
                 watchmovie = get_object_or_404(WatchedMovie, pk=delete_id)
                 watchmovie.delete()
                 my_watch_movie.remove(movie_pk)
                 break
         else:
             added_watched_movie = WatchedMovie(
-                user_id = request.user.pk,
-                movie_id = movie_pk
+                user_id=request.user.pk,
+                movie_id=movie_pk
             )
             added_watched_movie.save()
             my_watch_movie.append(added_watched_movie.movie_id)
@@ -154,15 +160,9 @@ def watched_movie(request, movie_pk):
 
 
 
-import sys
-
-sys.path.append('../')
-import krwordrank
-from krwordrank.hangle import normalize
-from krwordrank.word import KRWordRank
-
 
 # 리뷰 토크나이저
+# 내가 작성한 리뷰를 리뷰 부분과 평점 부분으로 나누는 함수
 def get_texts_scores(fname):
     # `fname` 파일은 영화평과 평점이 '&&' 으로 구분된 .txt 파일입니다.
     # with open(fname, encoding='utf-8') as f:
@@ -173,14 +173,17 @@ def get_texts_scores(fname):
 
     texts, scores = zip(*docs)
     return list(texts), list(scores)
-    
+
+
 def get_from_list(l, i, default=('', 0)):
     if len(l) <= i:
         return default
     else:
         return l[i]
 
-# 리뷰 작성 시 새 리뷰 모함하여 해당 영화의 키워드를 리뉴얼하는 함수
+
+
+# 리뷰 작성 시 새 리뷰를 포함하여 해당 영화의 키워드를 리뉴얼하는 함수
 def keyword_renewal(movie_pk):
 
     beta = 0.85    # PageRank의 decaying factor beta
@@ -195,7 +198,7 @@ def keyword_renewal(movie_pk):
             modify_rev.append(review)
             review_txt = review.sentence + '&&' + str(review.score)
             fnames.append(review_txt)
-            
+
     # for fname in fnames:
     texts, scores = get_texts_scores(fnames)
 
@@ -203,23 +206,16 @@ def keyword_renewal(movie_pk):
 
     keywords, rank, graph = wordrank_extractor.extract(texts, beta, max_iter)
 
-    top_keywords.append(sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:100])
-    top_keywords = sum(top_keywords,[])
-    
-
-    # 모든 영화들에서 키워드의 숫자를 셈
-    # keyword_counter = {}
-    # for keywords in top_keywords:
-    #     words, ranks = zip(*keywords)
-    #     for word in words:
-    #         keyword_counter[word] = keyword_counter.get(word, 0) + 1
+    top_keywords.append(
+        sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:100])
+    top_keywords = sum(top_keywords, [])
 
     get_common_keywords = CommonKeyword.objects.all()
     common_keywords = []
     for ck in get_common_keywords:
         common_keywords.append(ck.common_keyword)
 
-    # # common_keywords를 제외한 진짜 키워드만을 추출하여 selected_top_keywords에 영화별로 담음
+    # # common_keywords를 제외한 필터링 된 키워드만을 추출하여 selected_top_keywords에 영화별로 담음
     selected_top_keywords = []
     for keywords in top_keywords:
         keywords = [keywords]
@@ -229,7 +225,7 @@ def keyword_renewal(movie_pk):
                 continue
             # selected_keywords.append((word, r))
             selected_top_keywords.append((word, r))
-    
+
     keywords = Keyword.objects.all()
     keyword_list = []
     only_keyword_list = []
@@ -241,9 +237,9 @@ def keyword_renewal(movie_pk):
         res = get_from_list(selected_top_keywords, k)
         if res[0] not in only_keyword_list:
             added_keyword = Keyword(
-                    keyword = res[0],
-                    keyword_score = res[1],
-                    movie_id = movie_pk,
+                keyword=res[0],
+                keyword_score=res[1],
+                movie_id=movie_pk,
             )
             added_keyword.save()
             print('없는 키워드', res[0])
@@ -252,16 +248,17 @@ def keyword_renewal(movie_pk):
                 if j.keyword == res[0] and j.keyword_score != res[1]:
                     j.delete()
                     added_keyword = Keyword(
-                        keyword = res[0],
-                        keyword_score = res[1],
-                        movie_id = movie_pk,
+                        keyword=res[0],
+                        keyword_score=res[1],
+                        movie_id=movie_pk,
                     )
                     added_keyword.save()
                     print('값이 바뀐 키워드', res[0])
-    print('다돌았따!!!')
 
+
+
+# 리뷰 작성 및 키워드 추출, 키워드 기반 매칭된 영화 반환 함수
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def create_review(request, movie_pk):
     wms = []
     watchedmovie = WatchedMovie.objects.all()
@@ -272,19 +269,18 @@ def create_review(request, movie_pk):
     max_iter = 10
 
     top_keywords = []
-    
-    # fnames = './data/A Werewolf Boy (1).txt'
+
     # 유저가 작성한 리뷰와 score를 && 기준으로 묶음
     fnames = [request.data['sentence'] + '&&' + str(request.data['score'])]
     # 새로 작성된 리뷰를 DB에 저장
     added_review = Reviews(
-        sentence = request.data['sentence'],
-        score = request.data['score'],
-        movie_id = movie_pk,
-        user_id = request.user.pk
+        sentence=request.data['sentence'],
+        score=request.data['score'],
+        movie_id=movie_pk,
+        user_id=request.user.pk
     )
     added_review.save()
-    
+
     keyword_renewal(movie_pk)
 
     # 텍스트와 스코어를 분리
@@ -295,10 +291,11 @@ def create_review(request, movie_pk):
 
     keywords, rank, graph = wordrank_extractor.extract(texts, beta, max_iter)
 
-    # top_keywords= 내가 쓴 리뷰의 [(키워드, 스코어)]
-    top_keywords.append(sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:100])
-    top_keywords = sum(top_keywords,[])
-    
+    # top_keywords = 내가 쓴 리뷰의 [(키워드, 스코어)]
+    top_keywords.append(
+        sorted(keywords.items(), key=lambda x: x[1], reverse=True)[:100])
+    top_keywords = sum(top_keywords, [])
+
     get_common_keywords = CommonKeyword.objects.all()
     common_keywords = []
     for ck in get_common_keywords:
@@ -310,7 +307,7 @@ def create_review(request, movie_pk):
     top_keywords = tmp
 
     movies_keywords = Keyword.objects.all()
-    
+
     reco_movies = []
     if len(top_keywords) >= 3:
         for mRK in range(len(top_keywords)):
@@ -322,10 +319,10 @@ def create_review(request, movie_pk):
                 reco_movies.append(reco)
             if len(reco_movies) == 3:
                 break
-        reco_movies1 = sorted(reco_movies[0], key=lambda x:x.keyword_score, reverse=True)[:3]
-        reco_movies2 = sorted(reco_movies[1], key=lambda x:x.keyword_score, reverse=True)[:3]
-        reco_movies3 = sorted(reco_movies[2], key=lambda x:x.keyword_score, reverse=True)[:3]
-        
+        reco_movies1 = sorted(reco_movies[0], key=lambda x: x.keyword_score, reverse=True)[:3]
+        reco_movies2 = sorted(reco_movies[1], key=lambda x: x.keyword_score, reverse=True)[:3]
+        reco_movies3 = sorted(reco_movies[2], key=lambda x: x.keyword_score, reverse=True)[:3]
+
         reco_movies1 = random.sample(reco_movies1, 1)
         reco_movies2 = random.sample(reco_movies2, 1)
         reco_movies3 = random.sample(reco_movies3, 1)
@@ -336,7 +333,6 @@ def create_review(request, movie_pk):
         reco_mov = sum(reco_mov, [])
         serializer = KeywordsSerializer(reco_mov, many=True)
         print(serializer.data)
-        return Response(serializer.data)        
+        return Response(serializer.data)
     else:
         return JsonResponse(reco_movies, safe=False)
-    

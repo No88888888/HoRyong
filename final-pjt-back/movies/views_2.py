@@ -1,10 +1,5 @@
-# from django.shortcuts import render
-# from rest_framework.response import Response
-# from rest_framework.decorators import api_view
-# from rest_framework import status
 # Create your views here.
 from .models import CommonKeyword, Keyword
-
 import sys
 sys.path.append('../')
 import krwordrank
@@ -108,8 +103,6 @@ def keyword_extractor_many(request):
     #     if len(top_keywords[i]) < minV:
     #         minV = len(top_keywords[i])
     # avg = avg//50
-    # print('영화들 평균 키워드 개수:',avg)
-    # print('최소 키워드 수:',minV)
     # 모든 영화들에서 키워드의 숫자를 셈
     keyword_counter = {}
     for keywords in top_keywords:
@@ -118,23 +111,21 @@ def keyword_extractor_many(request):
             keyword_counter[word] = keyword_counter.get(word, 0) + 1
 
     # keyword_counter에서 영화의 개수만큼 나온 키워드를 common_keywords에 저장함(영화, 진짜 등등)
-    # common_keywords = [word for word, count in keyword_counter.items() if count >= 25]
+    common_keywords = [word for word, count in keyword_counter.items() if count >= 25]
     
-    # for j in common_keywords:
+    for j in common_keywords:
         
-    #     add_common_keywords = CommonKeyword(
-    #         common_keyword = j,
-    #     )
-    #     add_common_keywords.save()
+        add_common_keywords = CommonKeyword(
+            common_keyword = j,
+        )
+        add_common_keywords.save()
     
     # 커먼키워드 DB에서 커먼키워드 가져오기
-    get_common_keywords = CommonKeyword.objects.all()
-    common_keywords = []
-    for ck in get_common_keywords:
-        common_keywords.append(ck.common_keyword)
-        
-    print('커먼 키워드:', common_keywords)
-    print('커먼 키워드 개수:',len(common_keywords))
+    # get_common_keywords = CommonKeyword.objects.all()
+    # common_keywords = []
+    # for ck in get_common_keywords:
+    #     common_keywords.append(ck.common_keyword)
+
     # common_keywords를 제외한 진짜 키워드만을 추출하여 selected_top_keywords에 영화별로 담음
     selected_top_keywords = []
     for keywords in top_keywords:
@@ -147,11 +138,7 @@ def keyword_extractor_many(request):
 
 
 
-    movie_ids = [128246, 420817, 19995, 299534, 299536, 198277, 77866, 284052, 13, 109445, 672, 674, 767, 675, 673, 671, 771, 10191, 49530, 27205, 1726, 135397, 313369, 82695, 508, 77, 158445, 730823, 496243, 571783, 20342, 110415, 634649, 49026, 581528, 316029, 603, 479718, 619803, 15121, 129, 597, 361743, 396535, 14160, 752, 1016196, 10681, 791373, 269149]
-    cnt_list = []
     for i in range(50):
-        # for k in range(minV - len(common_keywords)):
-        # for k in range(len(selected_top_keywords[i]) - len(common_keywords)):
         cnt = 0
         # 각 영화 별 키워드 개수만큼 순회
         for k in range(len(selected_top_keywords[i])):
@@ -159,13 +146,10 @@ def keyword_extractor_many(request):
             res = get_from_list(selected_top_keywords[i], k)
             # 영화의 키워드가 커먼 키워드와 겹치면 통과
             if res[0] not in common_keywords:
-                # print(cnt, movie_ids[i], res[0], res[1])
                 added_keyword = Keyword(
                     movie_id = i+1,
                     keyword = res[0],
                     keyword_score = res[1],
                 )
                 added_keyword.save()
-    #     cnt_list.append(cnt)
-    # print(cnt_list)
         
