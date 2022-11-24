@@ -9,7 +9,7 @@
             <img :src="posterImg" alt="" class="image-sized">
           </div>
           <br>
-            <h5>{{ review.movie.title }}</h5>
+            <h5 class="movie-title">{{ review.movie.title }}</h5>
         </div>
       <div class="review-info col-8 d-flex align-items-center">
         <div class="reviw-info-div">
@@ -21,8 +21,10 @@
           </div>
           <div class="dummy-box">
           </div>
-          <div class="button d-flex justify-content-between">
+          <div class="button d-flex">
             <button @click="toMyReview">수정</button>
+            <div class="dummy-box2">
+            </div>
             <button @click="deleteReview">삭제</button>
           </div>
         </div>
@@ -86,13 +88,17 @@ export default {
 .dummy-box{
   height:50px
 }
+.dummy-box2{
+  width: 10px;
+}
 .poster > img {
   max-width: 100%;
   height: auto;
 }
-.movie-title h2{
+.movie-title {
   position:relative;
-  text-align:left;
+  font-weight: bold;
+  color: #f2f2f2;
 }
 .movie-rate p{
   position:relative;
