@@ -1,6 +1,8 @@
 <template>
   <div>
-    <h1>My Reviews</h1>
+    <div class="dummy-box">
+    </div>
+    <h3>My Reviews</h3>
     <MyReviewItems
     class="review-items"
     v-for="review in reviews"

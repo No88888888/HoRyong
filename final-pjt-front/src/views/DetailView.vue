@@ -1,7 +1,15 @@
 <template>
   <div id="app" class="background" :style="{ backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 10%, rgba(0, 0, 0, 0.7) 25%, rgba(0, 0, 0, 0.8) 50%, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 1) 100%), url(' + backdroppath + ')', backgroundSize: 'cover' }">
     
-    <h1 class="mb-5">Detail</h1>
+    <div class="dummy-box">
+    </div>
+    <div class="dummy-box">
+    </div>
+    <h3 class="fs-2"><b>Detail</b></h3>
+    <div class="dummy-box">
+    </div>
+    <div class="dummy-box">
+    </div>
     <div class="dummy-box">
     </div>
     <div class="container my-5">
@@ -167,52 +175,6 @@ export default {
   color: white;
   height: 100%;
 }
-/* .background{
-  height: 100%;
-}
-.background::after{
-  display: block;
-  content: '';
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background: linear-gradient(
-    to bottom,
-    rgb(251, 251, 251) 10%,
-    rgba(206, 206, 206, 0.7) 25%,
-    rgba(120, 120, 120, 0.8) 50%,
-    rgba(80, 80, 80, 0.9) 75%,
-    rgba(0, 0, 0, 1) 100%
-  ), var(--backdrop);
-  z-index: -1;
-} */
-
-/* .background {
-  height: 100%;
-  }
-.background::after {
-  height: 100%;
-  width: 100%;
-  content: "";
-  background-image: linear-gradient(
-            to bottom,
-            rgba(255, 255, 255, 0) 70%,
-            rgba(255, 255, 255, 0.5) 80%,
-            rgba(255, 255, 255, 0.75) 90%,
-            rgb(255, 255, 255) 100%
-          ), var(--backdrop);
-
-  overflow: hidden;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: 30%;
-
-  top: 0;
-  left: 0;
-  z-index: -1;
-  position: relative;
-} */
 .dummy-box{
   height:50px
 }
@@ -240,6 +202,4 @@ export default {
 .text-left {
   text-align: left;
 }
-
-
 </style>

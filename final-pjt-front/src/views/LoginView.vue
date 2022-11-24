@@ -1,6 +1,14 @@
 <template>
     <div>
-      <h1>Login Page</h1>
+      <div class="dummy-box">
+      </div>
+      <div class="dummy-box">
+      </div>
+      <h3 class="fs-2"><b>Login</b></h3>
+      <div class="dummy-box">
+      </div>
+      <div class="dummy-box">
+      </div>
       <form @submit.prevent="login">
         <b class="username">아이디</b><br>
         <span class="input" >
@@ -15,7 +23,9 @@
         </span>
         <br>
         <br>  
-        <input type="submit" value="login">
+        <div>
+        <button class="sign_up glow-on-hover" type="submit" value="Login">로그인</button>
+      </div>
       </form>
     </div>
 </template>
@@ -114,5 +124,63 @@ export default {
 
 .input-info {
   height: 30%;
+}
+.glow-on-hover {
+    width: 150px;
+    height: 50px;
+    border: none;
+    outline: none;
+    color: #fff;
+    background: #111;
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+    border-radius: 10px;
+}
+
+.glow-on-hover:before {
+    content: '';
+    background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+    position: absolute;
+    top: -2px;
+    left:-2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    animation: glowing 20s linear infinite;
+    opacity: 0;
+    transition: opacity .3s ease-in-out;
+    border-radius: 10px;
+}
+
+.glow-on-hover:active {
+    color: #000
+}
+
+.glow-on-hover:active:after {
+    background: transparent;
+}
+
+.glow-on-hover:hover:before {
+    opacity: 1;
+}
+
+.glow-on-hover:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
 }
 </style>

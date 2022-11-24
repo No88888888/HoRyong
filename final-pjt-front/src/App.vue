@@ -19,7 +19,7 @@
               </li>
               <li id="liTag" class="nav-item">
                 <router-link class="nav-item" :to="{ name: 'ProfileView' }" v-show="isLogedIn">Profiles</router-link>
-                <router-link class="nav-item" :to="{ name: 'SignUpView' }" v-if="!isLogedIn">Sign Up</router-link> 
+                <router-link class="nav-item" :to="{ name: 'SignUpView' }" v-if="!isLogedIn">SignUp</router-link> 
               </li>
               <li id="liTag" class="nav-item">
                 <a class="nav-item" v-show="isLogedIn" @click.prevent="logOut">Logout</a>
@@ -92,10 +92,10 @@ nav {
 }
 
 #liTag > a.router-link-exact-active {
-  color: #42b983;
+  color: yellow;
 }
 #liTag > a.exact-active {
-  color: #42b983;
+  color: yellow;
 }
 
 .navbar-nav {
@@ -134,5 +134,33 @@ body {
 		background-position: 0% 50%;
 	}
 } */
+@font-face {
+  src : url(../public/font/Jua-Regular.ttf);
+  font-family: "jua";
+}
+h1 {
+  font-family: "jua";
+}
+h2 {
+  font-family: "jua";
+}
+h3 {
+  font-family: "jua";
+}
+h4 {
+  font-family: "jua";
+}
+h5 {
+  font-family: "jua";
+}
+a {
+  font-family: "jua";
+}
+p {
+  font-family: "jua";
+}
+div {
+  font-family: "jua";
+}
 
 </style>

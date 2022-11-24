@@ -1,10 +1,8 @@
 <template>
   <div class="movie-lists">
     <div>
-      <h3>Movie List</h3>
       <div class="dummy-box">
       </div>
-      <p>{{getWatchedMovie}}</p>
       <div class="wrap-vertical"> 
         <MovieListsItem
         class="movie-items"
@@ -15,20 +13,20 @@
         />
       </div>
     </div>
-    <MovieCarousel/>
+    <!-- <MovieCarousel/> -->
   </div>
 </template>
 
 <script>
 import MovieListsItem from '@/components/MovieListsItem'
-import MovieCarousel from "@/components/MovieCarousel"
+// import MovieCarousel from "@/components/MovieCarousel"
 
 
 export default {
     name: "MovieLists",
     components: { 
         MovieListsItem,
-        MovieCarousel,
+        // MovieCarousel,
     },
     computed:{
       movies() {

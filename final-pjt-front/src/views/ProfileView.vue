@@ -1,11 +1,19 @@
 <template>
   <div>
+    <div class="dummy-box">
+    </div>
+    <div class="dummy-box">
+    </div>
+    <h3 class="fs-2"><b>내 프로필</b></h3>
+    <div class="dummy-box">
+    </div>
     <nav> 
-      <h1>Profile Page</h1>
-      <router-link :to="{ name: 'MyReview' }">MyReview</router-link> || 
+      <router-link :to="{ name: 'MyReview' }">MyReview</router-link> |
       <router-link :to="{ name: 'WishList' }">WishList</router-link>
       <router-view/>
     </nav>
+    <div class="dummy-box">
+    </div>
   </div>
 </template>
 
@@ -26,6 +34,6 @@ nav a {
 }
 
 nav a.router-link-exact-active {
-  color: #42b983;
+  color: yellow;
 }
 </style>
